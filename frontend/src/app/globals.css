@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-glass: hsla(0, 0%, 100%, 0.05);
+  --color-glass-border: hsla(0, 0%, 100%, 0.1);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-pulse-glow: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes pulse-glow {
+
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 20px -5px var(--primary);
+    }
+
+    50% {
+      opacity: .7;
+      box-shadow: 0 0 10px -2px var(--primary);
+    }
+  }
+}
+
+@layer base {
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@layer base {
+  :root {
+    /* Base - Deep Space Black */
+    --background: 240 10% 2%;
+    /* #050505 - Almost pure black */
+    --foreground: 0 0% 98%;
+
+    /* Cards - Slightly lighter but still deep */
+    --card: 240 10% 4%;
+    --card-foreground: 0 0% 98%;
+
+    /* Popovers - Glassy feel handled by bg-opacity usually, but base color here */
+    --popover: 240 10% 4%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary - Electric Violet / Indigo */
+    --primary: 252 87% 67%;
+    /* #8b5cf6 - Vivid Violet */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Muted Zinc */
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Muted - For subtle text */
+    --muted: 240 5% 15%;
+    --muted-foreground: 240 5% 60%;
+
+    /* Accent - Hot Pink for notifications/special actions */
+    --accent: 330 85% 60%;
+    /* Vibrant Pink */
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive - Red */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders - Subtle and glassy */
+    --border: 240 5% 12%;
+    --input: 240 5% 12%;
+    --ring: 252 87% 67%;
+    /* Matches Primary */
+
+    --radius: 1rem;
+    /* Modern rounded look */
+  }
+
+  /* Force Dark Mode Default */
+  .light {
+    /* Mapping light mode just in case, but preserving the 'feel' */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 252 87% 67%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 252 87% 67%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  :root {
+    --accent-violet: 262 83% 58%;
+    --accent-emerald: 160 84% 39%;
+    --accent-rose: 346 84% 61%;
+    --accent-amber: 38 92% 50%;
+    --accent-blue: 221 83% 53%;
+    --accent-cyan: 188 86% 53%;
+  }
+
+  .accent-violet { --primary: var(--accent-violet); --ring: var(--accent-violet); }
+  .accent-emerald { --primary: var(--accent-emerald); --ring: var(--accent-emerald); }
+  .accent-rose { --primary: var(--accent-rose); --ring: var(--accent-rose); }
+  .accent-amber { --primary: var(--accent-amber); --ring: var(--accent-amber); }
+  .accent-blue { --primary: var(--accent-blue); --ring: var(--accent-blue); }
+  .accent-cyan { --primary: var(--accent-cyan); --ring: var(--accent-cyan); }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/30 selection:text-white;
+  }
+
+  /* Custom Scrollbar for Webkit */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-800 rounded-full hover:bg-zinc-700 transition-colors;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  .glass-hover {
+    @apply hover:bg-white/10 hover:border-white/20 transition-all duration-300;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400;
+  }
+}
