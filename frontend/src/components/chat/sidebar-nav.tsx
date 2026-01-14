@@ -170,7 +170,7 @@ export function SidebarNav() {
             </div>
 
             <SettingsModal
-                Open={isSettingsOpen}
+                open={isSettingsOpen}
                 onClose={() => setIsSettingsOpen(false)}
                 currentUser={currentUser}
             />
