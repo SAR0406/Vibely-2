@@ -31,7 +31,9 @@ import { cn } from "@/lib/utils"
 
 interface SettingsModalProps {
     open: boolean
-    onOpenChange: (open: boolean) => void
+    onOpenChange?: (open: boolean) => void
+    onClose?: () => void
+    currentUser?: User | null
 }
 
 const ACCENT_COLORS: { value: AccentColor; label: string; class: string }[] = [
