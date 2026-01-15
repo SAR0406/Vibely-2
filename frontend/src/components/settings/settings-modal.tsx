@@ -26,6 +26,10 @@ import {
   VolumeX,
   Check,
   Image as ImageIcon,
+  Activity,
+  Server,
+  Database,
+  ShieldCheck,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -138,7 +142,8 @@ export function SettingsModal({
         <Tabs defaultValue="appearance">
           <TabsList className="grid w-full grid-cols-2 bg-white/5 border-b border-white/5">
             <TabsTrigger value="appearance">Appearance</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications & Sound</TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            <TabsTrigger value="system">System</TabsTrigger>
           </TabsList>
 
           <div className="p-6 space-y-6">
@@ -159,7 +164,7 @@ export function SettingsModal({
                         className={cn(
                           "flex flex-col items-center justify-center h-20 gap-2 border-white/10 bg-white/5 hover:bg-white/10 hover:text-white capitalize transition",
                           active &&
-                            "border-indigo-500 bg-indigo-500/10 text-indigo-400"
+                          "border-indigo-500 bg-indigo-500/10 text-indigo-400"
                         )}
                         aria-pressed={active}
                         aria-label={`Set theme to ${mode}`}
@@ -222,6 +227,36 @@ export function SettingsModal({
               />
 
               <DesktopNotificationsPlaceholder />
+            </TabsContent>
+
+            <TabsContent value="system" className="space-y-4">
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-emerald-400">All Systems Operational</h3>
+                  <p className="text-xs text-emerald-500/60">Uptime: 99.99% • Latency: 24ms</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <SystemCard icon={Server} label="Backend" status="Active" color="text-indigo-400" />
+                <SystemCard icon={Database} label="Database" status="Healthy" color="text-blue-400" />
+                <SystemCard icon={ShieldCheck} label="Encryption" status="AES-256" color="text-purple-400" />
+                <SystemCard icon={Activity} label="Redis Cache" status="Connected" color="text-orange-400" />
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-zinc-400">API Version</span>
+                  <span className="text-zinc-200 font-mono">v1.2.4-stable</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-zinc-400">Client Build</span>
+                  <span className="text-zinc-200 font-mono">2026.01.15</span>
+                </div>
+              </div>
             </TabsContent>
           </div>
         </Tabs>
@@ -305,6 +340,19 @@ function DesktopNotificationsPlaceholder() {
           <p className="text-sm text-zinc-500">Unavailable on this platform</p>
         </div>
         <Switch disabled checked={false} />
+      </div>
+    </div>
+  )
+}
+function SystemCard({ icon: Icon, label, status, color }: any) {
+  return (
+    <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3">
+      <div className={`p-2 rounded-lg bg-white/5 ${color}`}>
+        <Icon className="w-4 h-4" />
+      </div>
+      <div>
+        <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">{label}</p>
+        <p className="text-sm font-medium text-zinc-200">{status}</p>
       </div>
     </div>
   )

@@ -13,16 +13,29 @@ import {
     Cpu,
     Globe,
     Send,
-    AlertCircle,
-    CheckCircle2
+    CheckCircle2,
+    ActivitySquare
 } from "lucide-react"
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    Legend
+} from 'recharts';
 import { AdminLayout } from "@/components/admin/admin-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { adminApi } from "@/services/api"
 import { Button } from "@/components/design-system/button"
 import { cn } from "@/lib/utils"
 
-interface Stats {
+
+export interface Stats {
     totalUsers: number
     totalConversations: number
     totalMessages: number
@@ -31,6 +44,11 @@ interface Stats {
     newUsersThisWeek: number
     uptime: number
     systemHealth: string
+    memory?: { rss: number; heapTotal: number; heapUsed: number }
+    charts?: {
+        userGrowth: { date: string; users: number }[]
+        activity: { date: string; messages: number; active: number }[]
+    }
 }
 
 export default function AdminDashboard() {
@@ -144,6 +162,74 @@ export default function AdminDashboard() {
                     ))}
                 </div>
 
+                {/* Analytical Charts */}
+                {stats?.charts && (
+                    <div className="grid gap-6 md:grid-cols-2">
+                        <Card className="bg-zinc-900/50 border-white/5">
+                            <CardHeader>
+                                <CardTitle className="text-sm font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                                    <TrendingUp className="w-4 h-4 text-emerald-400" />
+                                    Growth Trajectory
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-[300px]">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={stats.charts.userGrowth}>
+                                        <defs>
+                                            <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                                                <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                        <XAxis dataKey="date" stroke="#666" tick={{ fontSize: 12 }} />
+                                        <YAxis stroke="#666" tick={{ fontSize: 12 }} />
+                                        <Tooltip
+                                            contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '8px' }}
+                                            itemStyle={{ color: '#fff' }}
+                                        />
+                                        <Area
+                                            type="monotone"
+                                            dataKey="users"
+                                            stroke="#8b5cf6"
+                                            strokeWidth={3}
+                                            fillOpacity={1}
+                                            fill="url(#colorUsers)"
+                                        />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="bg-zinc-900/50 border-white/5">
+                            <CardHeader>
+                                <CardTitle className="text-sm font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                                    <ActivitySquare className="w-4 h-4 text-blue-400" />
+                                    Network Activity
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-[300px]">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={stats.charts.activity}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                        <XAxis dataKey="date" stroke="#666" tick={{ fontSize: 12 }} />
+                                        <YAxis stroke="#666" tick={{ fontSize: 12 }} />
+                                        <Tooltip
+                                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                            contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '8px' }}
+                                            itemStyle={{ color: '#fff' }}
+                                        />
+                                        <Legend />
+                                        <Bar dataKey="messages" fill="#3b82f6" name="Messages" radius={[4, 4, 0, 0]} />
+                                        <Bar dataKey="active" fill="#10b981" name="Active Users" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
+
                 <div className="grid gap-6 md:grid-cols-3">
                     {/* Broadcast Tool */}
                     <Card className="md:col-span-2 bg-zinc-900/50 border-white/5 overflow-hidden">
@@ -213,13 +299,30 @@ export default function AdminDashboard() {
                             </div>
                             <div className="space-y-2">
                                 <div className="flex justify-between text-[10px] font-bold uppercase text-zinc-500">
-                                    <span>Asset Delivery (CDN)</span>
-                                    <span className="text-zinc-300">Optimal</span>
+                                    <span className="text-zinc-300">Optimal (CDN)</span>
                                 </div>
                                 <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                                     <motion.div initial={{ width: 0 }} animate={{ width: "95%" }} className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
                                 </div>
                             </div>
+
+                            {stats?.memory && (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-[10px] font-bold uppercase text-zinc-500">
+                                        <span>Memory Load</span>
+                                        <span className={stats.memory.heapUsed > 200 ? "text-amber-400" : "text-emerald-400"}>
+                                            {stats.memory.heapUsed}MB / {stats.memory.heapTotal}MB
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${Math.min((stats.memory.heapUsed / stats.memory.heapTotal) * 100, 100)}%` }}
+                                            className={cn("h-full shadow-lg transition-all duration-1000", stats.memory.heapUsed > 200 ? "bg-amber-500" : "bg-blue-500")}
+                                        />
+                                    </div>
+                                </div>
+                            )}
                             <div className="pt-4 border-t border-white/5 space-y-3">
                                 <div className="flex items-center justify-between text-xs">
                                     <span className="text-zinc-500">Node Environment</span>

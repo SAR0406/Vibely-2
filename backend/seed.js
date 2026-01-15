@@ -14,7 +14,7 @@ async function main() {
     const testUsers = [
         {
             email: 'admin@vibely.com',
-            password: 'adminpassword123',
+            password: 'admin0406',
             name: 'Vibely Admin',
             role: 'ADMIN',
         },

@@ -65,6 +65,7 @@ export const usersApi = {
     getMe: () => api.get('/users/me'),
     updateProfile: (data: any) => api.patch('/users/me', data),
     getById: (id: string) => api.get(`/users/${id}`),
+    getByUsername: (username: string) => api.get(`/users/profile/${username}`),
 };
 
 export const friendsApi = {
@@ -96,4 +97,22 @@ export const adminApi = {
     // Global Moderation
     getAllConversations: (page = 1, limit = 20) => api.get(`/admin/conversations?page=${page}&limit=${limit}`),
     getConversationMessages: (id: string, page = 1, limit = 50) => api.get(`/admin/conversations/${id}/messages?page=${page}&limit=${limit}`),
+};
+
+export const storiesApi = {
+    getStories: () => api.get('/stories'),
+    createStory: (formData: FormData) => api.post('/stories', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    viewStory: (id: string) => api.post(`/stories/${id}/view`)
+};
+
+export const feedApi = {
+    getFeed: () => api.get('/feed'),
+    createPost: (formData: FormData) => api.post('/feed', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    toggleLike: (id: string) => api.post(`/feed/${id}/like`),
+    addComment: (id: string, content: string) => api.post(`/feed/${id}/comments`, { content }),
+    getComments: (id: string) => api.get(`/feed/${id}/comments`)
 };

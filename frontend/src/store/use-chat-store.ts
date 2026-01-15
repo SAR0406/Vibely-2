@@ -46,6 +46,7 @@ export type Conversation = {
     lastMessageTime?: string
     unreadCount?: number
     participants: User[]
+    vibe?: { score: number; label: string }
 }
 
 interface ChatState {
@@ -63,7 +64,8 @@ interface ChatState {
     handleMessageReceived: (message: any) => void
     handleReactionAdded: (data: { messageId: string, reaction: any, conversationId: string }) => void
     updateUserStatus: (userId: string, isOnline: boolean, lastSeen?: string) => void
-    updateMessageStatus: (conversationId: string, status: 'seen') => void
+    updateMessageStatus: (conversationId: string, status: 'seen', messageIds?: string[]) => void
+    updateVibe: (conversationId: string, score: number, label: string) => void
 
     replyingTo: Message | null
     setReplyingTo: (message: Message | null) => void
@@ -242,17 +244,29 @@ export const useChatStore = create<ChatState>((set) => ({
         }))
     })),
 
-    updateMessageStatus: (conversationId, status) => set((state) => {
+    updateMessageStatus: (conversationId, status, messageIds) => set((state) => {
         const convoMessages = state.messages[conversationId];
         if (!convoMessages) return state;
 
         return {
             messages: {
                 ...state.messages,
-                [conversationId]: convoMessages.map(m => ({ ...m, status }))
+                [conversationId]: convoMessages.map(m => {
+                    if (messageIds && !messageIds.includes(m.id)) {
+                        return m;
+                    }
+                    return { ...m, status };
+                })
             }
-        };
-    }),
+        }
+    };
+}),
+
+    updateVibe: (conversationId, score, label) => set((state) => ({
+        conversations: state.conversations.map(c =>
+            c.id === conversationId ? { ...c, vibe: { score, label } } : c
+        )
+    })),
     toggleReactionOptimistic: (messageId, emoji, userId, conversationId) => set((state) => {
         const convoMessages = state.messages[conversationId] || [];
         if (!convoMessages.length) return state;

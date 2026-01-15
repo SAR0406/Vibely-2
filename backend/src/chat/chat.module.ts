@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ChatGateway } from './chat.gateway';
 import { ChatService } from './application/chat.service';
+import { VibeService } from './application/vibe.service';
 import { ChatController } from './chat.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -30,7 +31,8 @@ import { ChatPrismaRepository } from './infrastructure/chat.prisma.repository';
       provide: IChatRepository,
       useClass: ChatPrismaRepository,
     },
+    VibeService,
   ],
   exports: [ChatGateway, ChatService],
 })
-export class ChatModule {}
+export class ChatModule { }

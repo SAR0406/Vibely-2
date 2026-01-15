@@ -15,7 +15,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validateUser(payload: any) {
     return this.prisma.user.findUnique({ where: { id: payload.sub } });
@@ -59,7 +59,7 @@ export class AuthService {
       throw new ConflictException('User already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 12);
     const user = await this.prisma.user.create({
       data: {
         email: data.email,

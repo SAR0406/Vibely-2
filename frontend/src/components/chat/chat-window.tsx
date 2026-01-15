@@ -29,6 +29,7 @@ import { useSoundEffects } from '@/hooks/use-sound-effects'
 import { MessageReactions } from "./message-reactions"
 import { Lightbox } from "@/components/ui/lightbox"
 import { ChatSkeleton } from "@/components/skeletons/chat-skeleton"
+import { SmartReplies } from "./smart-replies"
 
 const EmojiPicker = dynamic(
     () => import('emoji-picker-react'),
@@ -47,7 +48,9 @@ export function ChatWindow() {
         handleReactionAdded,
         toggleReactionOptimistic,
         replyingTo,
-        setReplyingTo
+        setReplyingTo,
+        updateMessageStatus,
+        updateVibe
     } = useChatStore()
     const { startCall } = useCall()
     const { width } = useWindowSize()
@@ -194,9 +197,24 @@ export function ChatWindow() {
             }
         }
 
+        const handleMessagesSeen = (data: any) => {
+            if (data.conversationId === selectedConversationId) {
+                updateMessageStatus(data.conversationId, 'seen', data.messageIds)
+            }
+        }
+
+        const handleVibeUpdate = (data: any) => {
+            updateVibe(data.conversationId, data.score, data.label);
+        }
+
         socket.on('typing', handleRemoteTyping)
+        socket.on('messages:seen', handleMessagesSeen)
+        socket.on('chat:vibe', handleVibeUpdate)
+
         return () => {
             socket.off('typing', handleRemoteTyping)
+            socket.off('messages:seen', handleMessagesSeen)
+            socket.off('chat:vibe', handleVibeUpdate)
         }
     }, [selectedConversationId, socket, setMessages, currentUser?.id])
 
@@ -410,18 +428,48 @@ export function ChatWindow() {
                                 <span className="animate-pulse text-indigo-400">typing...</span>
                             ) : (isOnline ? 'Active Now' : (otherUser?.lastSeen ? `Seen ${formatDistance(otherUser.lastSeen)}` : 'Offline'))}
                         </span>
+                        <span className={cn("text-[11px] font-medium", isOnline ? "text-emerald-500" : "text-zinc-600")}>
+                            {remoteTyping ? (
+                                <span className="animate-pulse text-indigo-400">typing...</span>
+                            ) : (isOnline ? 'Active Now' : (otherUser?.lastSeen ? `Seen ${formatDistance(otherUser.lastSeen)}` : 'Offline'))}
+                        </span>
                     </div>
                 </div>
-                <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/5 disabled:opacity-30" onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, false)} disabled={!isOnline}>
-                        <Phone className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/5 disabled:opacity-30" onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, true)} disabled={!isOnline}>
-                        <Video className="h-4 w-4" />
-                    </Button>
-                </div>
-            </div>
 
+                {/* Vibe Meter */}
+                <div className="flex items-center gap-4 mr-4">
+                    {activeChat.vibe && (
+                        <div className="hidden md:flex flex-col items-end">
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+                                    {activeChat.vibe.label}
+                                </span>
+                                <span className="text-xs text-zinc-500 font-mono">
+                                    {activeChat.vibe.score}%
+                                </span>
+                            </div>
+                            <div className="w-24 h-1 bg-white/10 rounded-full overflow-hidden mt-1">
+                                <motion.div
+                                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${activeChat.vibe.score}%` }}
+                                    transition={{ duration: 1, type: "spring" }}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/5 disabled:opacity-30" onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, false)} disabled={!isOnline}>
+                            <Phone className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/5 disabled:opacity-30" onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, true)} disabled={!isOnline}>
+                            <Video className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+
+            </div>
 
             {/* Messages */}
             <ScrollArea className="flex-1 px-4 py-8" ref={scrollRef}>
@@ -477,6 +525,17 @@ export function ChatWindow() {
 
             {/* Input Area */}
             <div className="p-4 pt-2 bg-gradient-to-t from-black via-black/90 to-transparent z-20">
+
+                {/* Smart Replies */}
+                <SmartReplies
+                    lastMessageContent={activeMessages[activeMessages.length - 1]?.senderId !== currentUser?.id ? activeMessages[activeMessages.length - 1]?.content : undefined}
+                    onSelect={(reply) => {
+                        setInputValue(reply)
+                        // Optional: Auto-send or focus input?
+                        // Let's focus input so they can edit if they want, or just hit send
+                        // Or just auto-send for "speed"? Let's set value for now.
+                    }}
+                />
 
                 {/* Reply Context */}
                 <ReplyPreview />

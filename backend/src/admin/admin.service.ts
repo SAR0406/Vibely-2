@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async getStats() {
     const [totalUsers, totalConversations, totalMessages, totalReactions] =
@@ -28,6 +28,21 @@ export class AdminService {
       where: { createdAt: { gte: sevenDaysAgo } },
     });
 
+    const uptime = Math.floor(process.uptime());
+    const memoryUsage = process.memoryUsage();
+
+    // Mock data for charts (in a real app, this would come from analytics tables)
+    const userGrowth = Array.from({ length: 7 }, (_, i) => ({
+      date: new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'short' }),
+      users: totalUsers - Math.floor(Math.random() * 10 * (6 - i)),
+    }));
+
+    const activityData = Array.from({ length: 7 }, (_, i) => ({
+      date: new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'short' }),
+      messages: Math.floor(Math.random() * 500) + 100,
+      active: Math.floor(Math.random() * 50) + 10,
+    }));
+
     return {
       totalUsers,
       totalConversations,
@@ -35,8 +50,17 @@ export class AdminService {
       totalReactions,
       activeToday,
       newUsersThisWeek,
-      uptime: Math.floor(process.uptime()), // Seconds
+      uptime,
       systemHealth: 'Optimal',
+      memory: {
+        rss: Math.round(memoryUsage.rss / 1024 / 1024), // MB
+        heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024),
+        heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024),
+      },
+      charts: {
+        userGrowth,
+        activity: activityData
+      }
     };
   }
 

@@ -12,6 +12,7 @@ import {
     UserPlus,
     MoreVertical,
     Settings,
+    LayoutGrid,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -151,6 +152,15 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
 
                 {!isCollapsed && (
                     <>
+                        <Button
+                            variant="ghost"
+                            className="w-full justify-start gap-3 rounded-xl px-3 text-zinc-400 hover:text-white hover:bg-white/5 mb-2"
+                            onClick={() => router.push("/dashboard")}
+                        >
+                            <LayoutGrid className="h-4 w-4" />
+                            <span className="font-medium">Dashboard</span>
+                        </Button>
+
                         <div className="flex bg-white/5 rounded-lg p-1">
                             {(["chats", "friends"] as SidebarTab[]).map(tab => (
                                 <button

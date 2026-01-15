@@ -28,6 +28,13 @@ model User {
   conversations    Participant[]
   sentRequests     FriendRequest[] @relation("SentRequests")
   receivedRequests FriendRequest[] @relation("ReceivedRequests")
+
+  // Feed & Stories
+  posts         Post[]
+  comments      Comment[]
+  likes         Like[]
+  stories       Story[]
+  storyViews    StoryView[]
 }
 
 model Conversation {
@@ -124,4 +131,67 @@ model Report {
   createdAt    DateTime @default(now())
   resolvedAt   DateTime?
   resolvedById String?
+}
+
+// --- Feed & Stories ---
+
+model Post {
+  id        String   @id @default(uuid())
+  content   String?
+  imageUrl  String?
+  authorId  String
+  likesCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  likes     Like[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  authorId  String
+  postId    String
+  createdAt DateTime @default(now())
+
+  author    User @relation(fields: [authorId], references: [id])
+  post      Post @relation(fields: [postId], references: [id])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user      User @relation(fields: [userId], references: [id])
+  post      Post @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+}
+
+model Story {
+  id        String   @id @default(uuid())
+  mediaUrl  String
+  type      String   @default("IMAGE") // IMAGE, VIDEO
+  authorId  String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  author    User @relation(fields: [authorId], references: [id])
+  views     StoryView[]
+}
+
+model StoryView {
+  id        String   @id @default(uuid())
+  viewerId  String
+  storyId   String
+  viewedAt  DateTime @default(now())
+
+  viewer    User  @relation(fields: [viewerId], references: [id])
+  story     Story @relation(fields: [storyId], references: [id])
+
+  @@unique([viewerId, storyId])
 }

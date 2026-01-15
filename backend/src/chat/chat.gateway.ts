@@ -14,6 +14,7 @@ import { WsJwtGuard } from '../auth/infrastructure/guards/ws-jwt.guard';
 import { UsersService } from '../users/application/users.service';
 import { TokenValidationService } from '../auth/application/token-validation.service';
 import { ChatService } from './application/chat.service';
+import { VibeService } from './application/vibe.service';
 
 @UseGuards(WsJwtGuard)
 @WebSocketGateway({
@@ -22,8 +23,7 @@ import { ChatService } from './application/chat.service';
   },
 })
 export class ChatGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
@@ -33,7 +33,8 @@ export class ChatGateway
     private usersService: UsersService,
     private tokenService: TokenValidationService,
     private chatService: ChatService,
-  ) {}
+    private vibeService: VibeService,
+  ) { }
   // ============================
   // GATEWAY LIFECYCLE
   // ============================
@@ -221,6 +222,67 @@ export class ChatGateway
   }
 
   // ============================
+  // TYPING & STATUS EVENTS
+  // ============================
+
+  @SubscribeMessage('typing')
+  handleTyping(
+    @MessageBody() data: { conversationId: string; isTyping: boolean },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.user.sub;
+    // Broadcast to the conversation participants (excluding sender)
+    // For simplicity, we'll emit to the conversation room if we had one,
+    // or iterate participants. For now, assuming we don't have a direct conversation room,
+    // we'd broadcast to known participants.
+    // IMPROVEMENT: Ideally client joins a "conversation_ID" room.
+    // Let's assume the client IS in a room for this conversation or we broadcast to all.
+    // To keep it scoped, we should have clients join conversation rooms.
+
+    // For this implementation, we will broadcast to the user's specific room if we knew the other user,
+    // BUT, the current implementation blindly sends to `user_ID`.
+    // Let's rely on the client joining a conversation room or broadcast to all (less efficient).
+
+    // BETTER APPROACH:
+    client.broadcast.emit('typing', {
+      userId,
+      conversationId: data.conversationId,
+      isTyping: data.isTyping,
+    });
+  }
+
+  @SubscribeMessage('stop_typing')
+  handleStopTyping(
+    @MessageBody() data: { conversationId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.user.sub;
+    client.broadcast.emit('stop_typing', {
+      userId,
+      conversationId: data.conversationId,
+    });
+  }
+
+  @SubscribeMessage('markSeen')
+  async handleMarkSeen(
+    @MessageBody() data: { conversationId: string; messageIds?: string[] },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.user.sub;
+    // In a real app, update DB here
+    // await this.chatService.markAsRead(userId, data.messageIds);
+
+    // If messageIds not provided, assumes "all/latest". 
+    // For now we just broadcast that "some messages" were seen or just valid for the conversation.
+
+    client.broadcast.emit('messages:seen', {
+      userId,
+      conversationId: data.conversationId,
+      messageIds: data.messageIds, // Pass through if available
+    });
+  }
+
+  // ============================
   // CHAT EVENTS
   // ============================
 
@@ -250,9 +312,19 @@ export class ChatGateway
       data.replyToId,
     );
 
-    // Broadcast message to all participants in their private rooms
     result.participants.forEach((pId: string) => {
       this.server.to(`user_${pId}`).emit('message', result);
+    });
+
+    // VIBE CHECK
+    const vibe = this.vibeService.analyze(data.content);
+    // Broadcast vibe to conversation participants (or room)
+    result.participants.forEach((pId: string) => {
+      this.server.to(`user_${pId}`).emit('chat:vibe', {
+        conversationId: data.conversationId,
+        score: vibe.score,
+        label: vibe.label,
+      });
     });
   }
 

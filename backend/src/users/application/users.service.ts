@@ -6,7 +6,7 @@ export class UsersService {
   constructor(
     @Inject(IUserRepository)
     private readonly userRepository: IUserRepository,
-  ) {}
+  ) { }
 
   async searchUsers(query: string, currentUserId: string) {
     return this.userRepository.search(query, currentUserId);
@@ -14,6 +14,10 @@ export class UsersService {
 
   async getUserById(id: string) {
     return this.userRepository.findById(id);
+  }
+
+  async getUserByUsername(username: string) {
+    return this.userRepository.findByUsername(username);
   }
 
   async updateProfile(userId: string, data: any) {

@@ -14,7 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 @UseGuards(AuthGuard('jwt'))
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   @Get('search')
   async searchUsers(@Query('q') query: string, @Request() req: any) {
@@ -27,6 +27,11 @@ export class UsersController {
   @Get('me')
   async getMe(@Request() req: any) {
     return this.usersService.getUserById(req.user.id);
+  }
+
+  @Get('profile/:username')
+  async getProfile(@Param('username') username: string) {
+    return this.usersService.getUserByUsername(username);
   }
 
   @Patch('me')
