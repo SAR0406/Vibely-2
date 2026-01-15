@@ -1,12 +1,8 @@
 require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
-const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3');
-const Database = require('better-sqlite3');
 const bcrypt = require('bcrypt');
 
-const dbPath = process.env.DATABASE_URL || 'file:./prisma/dev.db';
-const adapter = new PrismaBetterSqlite3({ url: dbPath });
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 async function main() {
     console.log('🌱 Seeding database...');
@@ -43,18 +39,32 @@ async function main() {
         });
 
         if (existingUser) {
-            console.log(`✓ User ${userData.email} already exists`);
+            // Update admin password if it exists
+            if (userData.email === 'admin@vibely.com') {
+                const hashedPassword = await bcrypt.hash(userData.password, 10);
+                await prisma.user.update({
+                    where: { email: userData.email },
+                    data: {
+                        password: hashedPassword,
+                        role: 'ADMIN',
+                        isActive: true
+                    },
+                });
+                console.log(`✓ Updated admin user: ${userData.email}`);
+            } else {
+                console.log(`✓ User ${userData.email} already exists`);
+            }
             continue;
         }
 
         const hashedPassword = await bcrypt.hash(userData.password, 10);
-        const user = await prisma.user.create({
+        await prisma.user.create({
             data: {
                 email: userData.email,
                 password: hashedPassword,
                 name: userData.name,
                 role: userData.role || 'USER',
-                avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name}`,
+                avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userData.name)}`,
             },
         });
 
