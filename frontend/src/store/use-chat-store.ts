@@ -1,5 +1,8 @@
 import { create } from 'zustand'
-import { formatMessageTime } from '@/lib/date-utils'
+
+/* =======================
+   Types
+======================= */
 
 export type User = {
     id: string
@@ -54,6 +57,7 @@ interface ChatState {
     conversations: Conversation[]
     selectedConversationId: string | null
     messages: Record<string, Message[]>
+    replyingTo: Message | null
 
     setCurrentUser: (user: User) => void
     selectConversation: (id: string | null) => void
@@ -61,18 +65,34 @@ interface ChatState {
     addConversation: (conversation: Conversation) => void
     addMessage: (conversationId: string, message: Message) => void
     setMessages: (conversationId: string, messages: Message[]) => void
+
     handleMessageReceived: (message: any) => void
-    handleReactionAdded: (data: { messageId: string, reaction: any, conversationId: string }) => void
+    handleReactionAdded: (data: {
+        messageId: string
+        reaction: any
+        conversationId: string
+    }) => void
+
     updateUserStatus: (userId: string, isOnline: boolean, lastSeen?: string) => void
-    updateMessageStatus: (conversationId: string, status: 'seen', messageIds?: string[]) => void
+    updateMessageStatus: (
+        conversationId: string,
+        status: 'seen',
+        messageIds?: string[]
+    ) => void
+
     updateVibe: (conversationId: string, score: number, label: string) => void
-
-    replyingTo: Message | null
     setReplyingTo: (message: Message | null) => void
-
-    // Optimistic and real-time updates
-    toggleReactionOptimistic: (messageId: string, emoji: string, userId: string, conversationId: string) => void
+    toggleReactionOptimistic: (
+        messageId: string,
+        emoji: string,
+        userId: string,
+        conversationId: string
+    ) => void
 }
+
+/* =======================
+   Store
+======================= */
 
 export const useChatStore = create<ChatState>((set) => ({
     currentUser: null,
@@ -83,224 +103,184 @@ export const useChatStore = create<ChatState>((set) => ({
 
     setCurrentUser: (user) => set({ currentUser: user }),
     setReplyingTo: (message) => set({ replyingTo: message }),
-
     selectConversation: (id) => set({ selectedConversationId: id }),
-
     setConversations: (conversations) => set({ conversations }),
 
-    addConversation: (conversation) => set((state) => ({
-        conversations: [conversation, ...state.conversations]
-    })),
+    addConversation: (conversation) =>
+        set((state) => ({
+            conversations: [conversation, ...state.conversations],
+        })),
 
-    addMessage: (conversationId, message) => set((state) => {
-        const currentMessages = state.messages[conversationId] || [];
-        // Check if message already exists (to avoid duplicates from echo)
-        if (currentMessages.find(m => m.id === message.id)) return state;
+    addMessage: (conversationId, message) =>
+        set((state) => {
+            const existing = state.messages[conversationId] || []
+            if (existing.some((m) => m.id === message.id)) return state
 
-        return {
+            return {
+                messages: {
+                    ...state.messages,
+                    [conversationId]: [...existing, message],
+                },
+            }
+        }),
+
+    setMessages: (conversationId, messages) =>
+        set((state) => ({
             messages: {
                 ...state.messages,
-                [conversationId]: [...currentMessages, message]
-            }
-        };
-    }),
-
-    setMessages: (conversationId, messages) => set((state) => ({
-        messages: {
-            ...state.messages,
-            [conversationId]: messages
-        }
-    })),
-
-    handleMessageReceived: (message) => set((state) => {
-        const conversationId = message.conversationId;
-        const formattedMsg: Message = {
-            id: message.id,
-            content: message.content,
-            type: message.type || 'TEXT',
-            attachmentUrl: message.attachmentUrl,
-            senderId: message.senderId,
-            sender: message.sender ? {
-                name: message.sender.name,
-                avatar: message.sender.avatar
-            } : undefined,
-            timestamp: message.createdAt || new Date().toISOString(),
-            status: (message.status || 'SENT').toLowerCase() as any,
-            reactions: message.reactions || [],
-            replyTo: message.replyTo
-        };
-
-        // 1. Update messages history
-        const currentMessages = state.messages[conversationId] || [];
-
-        // Find if there's an optimistic message that "matches" this one
-        // (same sender, same content, and it was sent as "Sending...")
-        let foundOptimisticIndex = -1;
-        if (message.senderId === state.currentUser?.id) {
-            foundOptimisticIndex = currentMessages.findIndex(m =>
-                (m.id.length > 15 || isNaN(Number(m.id))) === false && // Simple check for temp numeric IDs
-                m.content === formattedMsg.content &&
-                m.status === 'sent' // Optimistic messages are marked 'sent' but keep numeric IDs
-            );
-        }
-
-        let updatedMessages;
-        if (foundOptimisticIndex !== -1) {
-            // Replace the optimistic message with the real one
-            updatedMessages = [...currentMessages];
-            updatedMessages[foundOptimisticIndex] = formattedMsg;
-        } else {
-            // Just add if not duplicate by ID
-            const isDuplicate = currentMessages.some(m => m.id === message.id);
-            updatedMessages = isDuplicate ? currentMessages : [...currentMessages, formattedMsg];
-        }
-
-        // 2. Update conversation list item
-        const updatedConversations = state.conversations.map(convo => {
-            if (convo.id === conversationId) {
-                return {
-                    ...convo,
-                    lastMessage: message.content,
-                    lastMessageTime: formattedMsg.timestamp,
-                    unreadCount: (convo.id !== state.selectedConversationId && message.senderId !== state.currentUser?.id)
-                        ? (convo.unreadCount || 0) + 1
-                        : convo.unreadCount
-                };
-            }
-            return convo;
-        });
-
-        // 3. Move active conversation to top
-        const activeConvo = updatedConversations.find(c => c.id === conversationId);
-        const otherConvos = updatedConversations.filter(c => c.id !== conversationId);
-        const reorderedConversations = activeConvo ? [activeConvo, ...otherConvos] : updatedConversations;
-
-        return {
-            messages: {
-                ...state.messages,
-                [conversationId]: updatedMessages
+                [conversationId]: messages,
             },
-            conversations: reorderedConversations
-        };
-    }),
+        })),
 
-    handleReactionAdded: ({ messageId, reaction, conversationId }) => set((state) => {
-        const convoMessages = state.messages[conversationId];
-        if (!convoMessages) return state;
+    handleMessageReceived: (message) =>
+        set((state) => {
+            const conversationId = message.conversationId
 
-        return {
-            messages: {
-                ...state.messages,
-                [conversationId]: convoMessages.map(m => {
-                    if (m.id === messageId) {
-                        const existingReactions = m.reactions || [];
-
-                        // Check if the backend response indicates the reaction was added or removed
-                        // If 'reaction' is the full object that was just toggled
-                        // We need a way to know if it was added or removed.
-                        // Usually prisma .delete returns the deleted object.
-                        // Let's assume if it exists in locally, we remove it, else add it.
-                        // BUT better to check if it's already in the list by some unique constraint (userId, emoji)
-
-                        const existingIndex = existingReactions.findIndex(r => r.id === reaction.id);
-                        const sameUserEmojiIndex = existingReactions.findIndex(r =>
-                            r.userId === reaction.userId && r.emoji === reaction.emoji
-                        );
-
-                        let updatedReactions;
-
-                        if (reaction.isDeleted) {
-                            // Server says it's deleted. Remove any matching instances.
-                            updatedReactions = existingReactions.filter(r =>
-                                r.id !== reaction.id &&
-                                !(r.userId === reaction.userId && r.emoji === reaction.emoji)
-                            );
-                        } else {
-                            // Server says it's added.
-                            if (sameUserEmojiIndex !== -1) {
-                                // Replace optimistic or duplicate with real server one
-                                updatedReactions = [...existingReactions];
-                                updatedReactions[sameUserEmojiIndex] = reaction;
-                            } else {
-                                // Add new
-                                updatedReactions = [...existingReactions, reaction];
-                            }
-                        }
-
-                        return { ...m, reactions: updatedReactions };
+            const formatted: Message = {
+                id: message.id,
+                content: message.content,
+                type: message.type || 'TEXT',
+                attachmentUrl: message.attachmentUrl,
+                senderId: message.senderId,
+                sender: message.sender
+                    ? {
+                        name: message.sender.name,
+                        avatar: message.sender.avatar,
                     }
-                    return m;
-                })
+                    : undefined,
+                timestamp: message.createdAt || new Date().toISOString(),
+                status: (message.status || 'sent').toLowerCase(),
+                reactions: message.reactions || [],
+                replyTo: message.replyTo,
             }
-        };
-    }),
 
-    updateUserStatus: (userId, isOnline, lastSeen) => set((state) => ({
-        conversations: state.conversations.map(convo => ({
-            ...convo,
-            participants: convo.participants.map(p =>
-                p.id === userId ? { ...p, isOnline, lastSeen } : p
+            const current = state.messages[conversationId] || []
+            const updatedMessages = current.some((m) => m.id === formatted.id)
+                ? current
+                : [...current, formatted]
+
+            const conversations = state.conversations.map((c) =>
+                c.id === conversationId
+                    ? {
+                        ...c,
+                        lastMessage: formatted.content,
+                        lastMessageTime: formatted.timestamp,
+                        unreadCount:
+                            c.id !== state.selectedConversationId &&
+                                message.senderId !== state.currentUser?.id
+                                ? (c.unreadCount || 0) + 1
+                                : c.unreadCount,
+                    }
+                    : c
             )
-        }))
-    })),
 
-    updateMessageStatus: (conversationId, status, messageIds) => set((state) => {
-        const convoMessages = state.messages[conversationId];
-        if (!convoMessages) return state;
-
-        return {
-            messages: {
-                ...state.messages,
-                [conversationId]: convoMessages.map(m => {
-                    if (messageIds && !messageIds.includes(m.id)) {
-                        return m;
-                    }
-                    return { ...m, status };
-                })
+            return {
+                messages: {
+                    ...state.messages,
+                    [conversationId]: updatedMessages,
+                },
+                conversations,
             }
-        }
-    };
-}),
+        }),
 
-    updateVibe: (conversationId, score, label) => set((state) => ({
-        conversations: state.conversations.map(c =>
-            c.id === conversationId ? { ...c, vibe: { score, label } } : c
-        )
-    })),
-    toggleReactionOptimistic: (messageId, emoji, userId, conversationId) => set((state) => {
-        const convoMessages = state.messages[conversationId] || [];
-        if (!convoMessages.length) return state;
+    handleReactionAdded: ({ messageId, reaction, conversationId }) =>
+        set((state) => {
+            const msgs = state.messages[conversationId]
+            if (!msgs) return state
 
-        return {
-            messages: {
-                ...state.messages,
-                [conversationId]: convoMessages.map(m => {
-                    if (m.id === messageId) {
-                        const existingReactions = m.reactions || [];
-                        const existingIndex = existingReactions.findIndex(r => r.userId === userId && r.emoji === emoji);
+            return {
+                messages: {
+                    ...state.messages,
+                    [conversationId]: msgs.map((m) =>
+                        m.id === messageId
+                            ? {
+                                ...m,
+                                reactions: reaction.isDeleted
+                                    ? (m.reactions || []).filter(
+                                        (r) =>
+                                            !(
+                                                r.userId === reaction.userId &&
+                                                r.emoji === reaction.emoji
+                                            )
+                                    )
+                                    : [...(m.reactions || []), reaction],
+                            }
+                            : m
+                    ),
+                },
+            }
+        }),
 
-                        let updatedReactions;
-                        if (existingIndex !== -1) {
-                            // Remove (Optimistic toggle off)
-                            updatedReactions = existingReactions.filter((_, idx) => idx !== existingIndex);
-                        } else {
-                            // Add (Optimistic toggle on)
-                            updatedReactions = [
-                                ...existingReactions,
-                                {
-                                    id: `opt-${Date.now()}`, // Temporary ID
-                                    emoji,
-                                    userId,
-                                    messageId,
-                                    fake: true // Flag to identify optimistic update if needed
-                                }
-                            ];
+    updateUserStatus: (userId, isOnline, lastSeen) =>
+        set((state) => ({
+            conversations: state.conversations.map((c) => ({
+                ...c,
+                participants: c.participants.map((p) =>
+                    p.id === userId ? { ...p, isOnline, lastSeen } : p
+                ),
+            })),
+        })),
+
+    updateMessageStatus: (conversationId, status, messageIds) =>
+        set((state) => {
+            const msgs = state.messages[conversationId]
+            if (!msgs) return state
+
+            return {
+                messages: {
+                    ...state.messages,
+                    [conversationId]: msgs.map((m) =>
+                        messageIds && !messageIds.includes(m.id)
+                            ? m
+                            : { ...m, status }
+                    ),
+                },
+            }
+        }),
+
+    updateVibe: (conversationId, score, label) =>
+        set((state) => ({
+            conversations: state.conversations.map((c) =>
+                c.id === conversationId
+                    ? { ...c, vibe: { score, label } }
+                    : c
+            ),
+        })),
+
+    toggleReactionOptimistic: (messageId, emoji, userId, conversationId) =>
+        set((state) => {
+            const msgs = state.messages[conversationId]
+            if (!msgs) return state
+
+            return {
+                messages: {
+                    ...state.messages,
+                    [conversationId]: msgs.map((m) => {
+                        if (m.id !== messageId) return m
+
+                        const reactions = m.reactions || []
+                        const index = reactions.findIndex(
+                            (r) => r.userId === userId && r.emoji === emoji
+                        )
+
+                        return {
+                            ...m,
+                            reactions:
+                                index !== -1
+                                    ? reactions.filter((_, i) => i !== index)
+                                    : [
+                                        ...reactions,
+                                        {
+                                            id: `opt-${Date.now()}`,
+                                            emoji,
+                                            userId,
+                                            messageId,
+                                            fake: true,
+                                        },
+                                    ],
                         }
-                        return { ...m, reactions: updatedReactions };
-                    }
-                    return m;
-                })
+                    }),
+                },
             }
-        };
-    })
+        }),
 }))
