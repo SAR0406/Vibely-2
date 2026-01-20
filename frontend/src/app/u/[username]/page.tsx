@@ -56,7 +56,7 @@ export default function PublicProfilePage() {
                                 initial={{ scale: 1.1, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 0.2 }}
                                 transition={{ duration: 1.5 }}
-                                src="/nano-banana.png"
+                                src="/nexus-core.png"
                                 className="absolute -right-20 -top-20 w-96 h-96 grayscale opacity-20 pointer-events-none group-hover:scale-110 transition-transform duration-1000"
                             />
                             <div className="absolute inset-0 bg-black/10" />
@@ -71,7 +71,7 @@ export default function PublicProfilePage() {
                                     <AvatarFallback className="text-2xl">{user.name?.[0]}</AvatarFallback>
 
                                     {/* Level Badge */}
-                                    <div className="absolute -bottom-2 -right-2 bg-gradient-to-tr from-yellow-400 to-orange-500 px-2 py-1 rounded-lg border-2 border-[#050505] shadow-lg">
+                                    <div className="absolute -bottom-2 -right-2 bg-gradient-to-tr from-cyan-400 to-indigo-500 px-2 py-1 rounded-lg border-2 border-[#050505] shadow-lg">
                                         <span className="text-[10px] font-black text-white italic">LVL {user.level || 1}</span>
                                     </div>
                                 </Avatar>
@@ -141,8 +141,8 @@ export default function PublicProfilePage() {
 
                                 <div className="pt-6 border-t border-white/5">
                                     <div className="flex justify-between items-center mb-4">
-                                        <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider">Banana Pass</h3>
-                                        <span className="text-[10px] font-black text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20">{user.tier || 'FREE'}</span>
+                                        <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider">Nexus Pass</h3>
+                                        <span className="text-[10px] font-black text-cyan-500 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">{user.tier || 'FREE'}</span>
                                     </div>
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between text-xs">
