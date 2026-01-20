@@ -22,7 +22,15 @@ model User {
   isActive      Boolean  @default(true)
   lastSeen      DateTime @default(now())
   createdAt     DateTime @default(now())
+  tier          Tier     @default(FREE)
+  subscriptionId String? @unique
+  points        Int      @default(0)
+  xp            Int      @default(0)
+  level         Int      @default(1)
   updatedAt     DateTime @updatedAt
+
+  subscription     Subscription? @relation(fields: [subscriptionId], references: [id])
+  boosts           BoostRecord[]
 
   messages         Message[]
   conversations    Participant[]
@@ -147,6 +155,7 @@ model Post {
   author    User      @relation(fields: [authorId], references: [id])
   comments  Comment[]
   likes     Like[]
+  boosts    BoostRecord[]
 }
 
 model Comment {
@@ -194,4 +203,50 @@ model StoryView {
   story     Story @relation(fields: [storyId], references: [id])
 
   @@unique([viewerId, storyId])
+}
+
+// --- SaaS & AI System ---
+
+enum Tier {
+  FREE
+  PRO
+  BUSINESS
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  planId    String
+  status    String   @default("ACTIVE") // ACTIVE, CANCELLED, EXPIRED
+  startDate DateTime @default(now())
+  endDate   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User?
+  plan Plan  @relation(fields: [planId], references: [id])
+}
+
+model Plan {
+  id          String   @id @default(uuid())
+  name        String
+  tier        Tier
+  price       Float
+  interval    String   @default("MONTHLY") // MONTHLY, YEARLY
+  features    String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subscriptions Subscription[]
+}
+
+model BoostRecord {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }

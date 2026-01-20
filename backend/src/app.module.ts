@@ -13,6 +13,8 @@ import { FriendsModule } from './friends/friends.module';
 import { UploadModule } from './upload/upload.module';
 import { AdminModule } from './admin/admin.module';
 import { HealthModule } from './health/health.module';
+import { SubscriptionModule } from './subscription/subscription.module';
+import { AIModule } from './ai/ai.module';
 import { LoggerModule } from 'nestjs-pino';
 
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
@@ -47,6 +49,8 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
     HealthModule,
     StoriesModule,
     FeedModule,
+    SubscriptionModule,
+    AIModule,
   ],
   controllers: [AppController],
   providers: [

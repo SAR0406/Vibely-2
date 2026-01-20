@@ -68,6 +68,7 @@ const ACCENT_COLORS: { value: AccentColor; label: string; class: string }[] = [
   { value: "amber", label: "Amber", class: "bg-amber-500" },
   { value: "blue", label: "Blue", class: "bg-blue-500" },
   { value: "cyan", label: "Cyan", class: "bg-cyan-500" },
+  { value: "gold", label: "Gold", class: "bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600" },
 ]
 
 const WALLPAPERS: { value: Wallpaper; label: string; preview?: string }[] = [
@@ -75,6 +76,9 @@ const WALLPAPERS: { value: Wallpaper; label: string; preview?: string }[] = [
   { value: "grid", label: "Cyber Grid" },
   { value: "dots", label: "Polka Dots" },
   { value: "gradient", label: "Aurora Gradient" },
+  { value: "cyberpunk", label: "Neo Tokyo", isPro: true },
+  { value: "glass", label: "Frosted Glass", isPro: true },
+  { value: "nebula", label: "Interstellar", isPro: true },
 ]
 
 export function SettingsModal({
@@ -92,6 +96,7 @@ export function SettingsModal({
     setWallpaper,
     soundEnabled,
     toggleSound,
+    userTier,
   } = useThemeStore()
 
   // Map dialog's `onOpenChange` into both callbacks: call onOpenChange if present,
@@ -212,8 +217,15 @@ export function SettingsModal({
                     <WallpaperOption
                       key={wp.value}
                       wp={wp}
+                      userTier={userTier}
                       selected={wallpaper === wp.value}
-                      onSelect={() => setWallpaper(wp.value)}
+                      onSelect={() => {
+                        if ((wp as any).isPro && userTier === 'FREE') {
+                          alert('Upgrade to PRO to unlock this vibe!');
+                          return;
+                        }
+                        setWallpaper(wp.value)
+                      }}
                     />
                   ))}
                 </div>
@@ -270,22 +282,32 @@ function WallpaperOption({
   wp,
   selected,
   onSelect,
+  userTier,
 }: {
-  wp: { value: Wallpaper; label: string }
+  wp: { value: Wallpaper; label: string; isPro?: boolean }
   selected: boolean
   onSelect: () => void
+  userTier: string
 }) {
+  const isLocked = wp.isPro && userTier === 'FREE'
+
   return (
     <button
       type="button"
       onClick={onSelect}
       className={cn(
         "relative cursor-pointer rounded-xl overflow-hidden aspect-video border-2 transition-all text-left",
-        selected ? "border-indigo-500 shadow-lg" : "border-white/10 hover:border-white/20"
+        selected ? "border-indigo-500 shadow-lg" : "border-white/10 hover:border-white/20",
+        isLocked && "opacity-70"
       )}
       aria-pressed={selected}
       aria-label={`Select wallpaper ${wp.label}`}
     >
+      {isLocked && (
+        <div className="absolute inset-0 z-10 bg-black/40 flex items-center justify-center">
+          <Zap className="w-6 h-6 text-yellow-400 fill-yellow-400" />
+        </div>
+      )}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 opacity-40" />
 
       {wp.value === "grid" && (

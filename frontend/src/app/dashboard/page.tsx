@@ -8,6 +8,8 @@ import { VibeStories } from "../../components/dashboard/vibe-stories"
 import { QuickStats } from "../../components/dashboard/quick-stats"
 import { FeedWidget } from "../../components/dashboard/feed-widget"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { WeatherWidget, LiveHuddleWidget, MoodAnalyticsWidget } from "../../components/dashboard/nano-widgets"
+import { CommandCenter } from "../../components/dashboard/command-center"
 
 export default function DashboardPage() {
     return (
@@ -38,11 +40,13 @@ export default function DashboardPage() {
                             <FeedWidget />
                         </div>
 
-                        {/* Right Column: Stats & Widgets */}
+                        {/* Right Column: Nano Widgets */}
                         <div className="space-y-6">
-                            <QuickStats />
+                            <WeatherWidget />
+                            <LiveHuddleWidget />
+                            <MoodAnalyticsWidget />
 
-                            {/* Premium Promo / Daily Vibe Widget */}
+                            {/* Premium Promo */}
                             <motion.div
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -54,12 +58,12 @@ export default function DashboardPage() {
                                     <span className="inline-block px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold text-white mb-4 backdrop-blur-sm border border-white/10 uppercase tracking-wider">
                                         Pro Feature
                                     </span>
-                                    <h3 className="text-2xl font-bold text-white mb-2">Vibe AI ✨</h3>
+                                    <h3 className="text-2xl font-bold text-white mb-2">Nexus Pass ✨</h3>
                                     <p className="text-indigo-100/80 text-sm mb-6 leading-relaxed">
-                                        Unlock deeper insights into your connections and personalized mood analytics.
+                                        Level up your profile, earn unique badges and dominate the vibe discovery.
                                     </p>
                                     <button className="w-full py-3 bg-white text-indigo-600 rounded-xl text-sm font-bold hover:bg-indigo-50 transition-colors shadow-lg">
-                                        Upgrade to Pro
+                                        Join Pro
                                     </button>
                                 </div>
                             </motion.div>
@@ -67,6 +71,8 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </ScrollArea>
+
+            <CommandCenter />
         </div>
     )
 }
