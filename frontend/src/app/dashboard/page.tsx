@@ -8,7 +8,7 @@ import { VibeStories } from "../../components/dashboard/vibe-stories"
 import { QuickStats } from "../../components/dashboard/quick-stats"
 import { FeedWidget } from "../../components/dashboard/feed-widget"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { WeatherWidget, LiveHuddleWidget, MoodAnalyticsWidget } from "../../components/dashboard/nano-widgets"
+import { WeatherWidget, LiveHuddleWidget, MoodAnalyticsWidget } from "../../components/dashboard/nexus-widgets"
 import { CommandCenter } from "../../components/dashboard/command-center"
 
 export default function DashboardPage() {
@@ -40,7 +40,7 @@ export default function DashboardPage() {
                             <FeedWidget />
                         </div>
 
-                        {/* Right Column: Nano Widgets */}
+                        {/* Right Column: Nexus Widgets */}
                         <div className="space-y-6">
                             <WeatherWidget />
                             <LiveHuddleWidget />

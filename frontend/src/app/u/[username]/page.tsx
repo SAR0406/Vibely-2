@@ -147,7 +147,7 @@ export default function PublicProfilePage() {
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between text-xs">
                                             <span className="text-zinc-500">Total Points</span>
-                                            <span className="text-white font-mono">{user.points || 0} NANA</span>
+                                            <span className="text-white font-mono">{user.points || 0} NEXUS</span>
                                         </div>
                                         <div className="space-y-2">
                                             <div className="flex justify-between text-[10px] uppercase font-bold tracking-widest">
@@ -158,7 +158,7 @@ export default function PublicProfilePage() {
                                                 <motion.div
                                                     initial={{ width: 0 }}
                                                     animate={{ width: `${(user.xp % 1000) / 10 || 0}%` }}
-                                                    className="h-full bg-yellow-500"
+                                                    className="h-full bg-cyan-500 shadow-[0_0_10px_rgba(34,211,238,0.5)]"
                                                 />
                                             </div>
                                         </div>
