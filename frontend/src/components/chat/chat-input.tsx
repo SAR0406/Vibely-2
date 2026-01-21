@@ -13,7 +13,7 @@ interface ChatInputProps {
     onSend: () => void
     onTyping: () => void
     onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
-    fileInputRef: React.RefObject<HTMLInputElement>
+    fileInputRef: React.RefObject<HTMLInputElement | null>
     isRecording?: boolean // Placeholder for future audio hook
 }
 
