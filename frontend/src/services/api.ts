@@ -97,7 +97,11 @@ export const adminApi = {
     // Global Moderation
     getAllConversations: (page = 1, limit = 20) => api.get(`/admin/conversations?page=${page}&limit=${limit}`),
     getConversationMessages: (id: string, page = 1, limit = 50) => api.get(`/admin/conversations/${id}/messages?page=${page}&limit=${limit}`),
+
+    upgradeUser: (id: string, tier: 'FREE' | 'PRO' | 'BUSINESS') => api.post(`/admin/users/${id}/upgrade`, { tier }),
+    deleteMessage: (id: string) => api.delete(`/admin/messages/${id}`),
 };
+
 
 export const storiesApi = {
     getStories: () => api.get('/stories'),
