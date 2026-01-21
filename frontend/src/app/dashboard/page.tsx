@@ -12,6 +12,7 @@ import { CommandCenter } from "../../components/dashboard/command-center"
 import { GlassCard } from "@/components/ui/glass-card"
 import { VibeButton } from "@/components/ui/vibe-button"
 import { Sparkles, Zap, ArrowUpRight } from "lucide-react"
+import { GlassBottomNav } from "@/components/layout/glass-bottom-nav"
 
 export default function DashboardPage() {
     return (
@@ -119,6 +120,7 @@ export default function DashboardPage() {
                 </div>
             </ScrollArea>
 
+            <GlassBottomNav />
             <CommandCenter />
         </div>
     )

@@ -39,12 +39,23 @@ export function MessageReactions({ reactions, onReact, currentUserId }: MessageR
                     whileTap={{ scale: 0.9 }}
                     onClick={() => onReact(emoji)}
                     className={cn(
-                        "flex items-center gap-1 px-2 py-0.5 rounded-full border transition-all text-[11px] font-medium backdrop-blur-sm select-none",
+                        "flex items-center gap-1 px-2 py-0.5 rounded-full border transition-all text-[11px] font-medium backdrop-blur-sm select-none relative overflow-hidden",
                         data.hasReacted
                             ? "bg-indigo-500/20 border-indigo-500/50 text-indigo-200 hover:bg-indigo-500/30 shadow-[0_0_10px_rgba(99,102,241,0.15)]"
                             : "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10 text-zinc-400 hover:text-zinc-300"
                     )}
                 >
+                    <AnimatePresence>
+                        {data.hasReacted && (
+                            <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1.5, opacity: 0 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.5 }}
+                                className="absolute inset-0 bg-indigo-500/50 rounded-full"
+                            />
+                        )}
+                    </AnimatePresence>
                     <span>{emoji}</span>
                     <span className={cn("text-[10px]", data.hasReacted ? "opacity-100" : "opacity-70")}>{data.count}</span>
                 </motion.button>

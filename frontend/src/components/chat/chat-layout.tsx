@@ -17,6 +17,7 @@ import {
 import { Sidebar } from "./sidebar"
 import { ChatWindow } from "./chat-window"
 import { SidebarNav } from "./sidebar-nav"
+import { GlassBottomNav } from "@/components/layout/glass-bottom-nav"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/design-system/avatar"
 import { Button } from "@/components/design-system/button"
@@ -93,27 +94,7 @@ export function ChatLayout({
                 </div>
 
                 {/* Mobile Bottom Navigation - Glass */}
-                {!selectedConversationId && (
-                    <nav className="h-24 border-t border-white/5 bg-[#050505]/80 backdrop-blur-3xl flex items-center justify-around px-6 relative z-10 pb-safe pb-4">
-                        {[
-                            { icon: MessageSquare, label: "Messages" },
-                            { icon: Search, label: "Search" },
-                            { icon: Bell, label: "Alerts" },
-                        ].map(({ icon: Icon, label }) => (
-                            <Button
-                                key={label}
-                                variant="ghost"
-                                size="icon"
-                                className="flex flex-col gap-1 text-zinc-500 hover:text-indigo-400 transition-all h-16 w-16 rounded-2xl hover:bg-white/5"
-                            >
-                                <Icon className="h-6 w-6" />
-                                <span className="text-[10px] font-bold tracking-tight">
-                                    {label}
-                                </span>
-                            </Button>
-                        ))}
-                    </nav>
-                )}
+                {!selectedConversationId && <GlassBottomNav />}
             </div>
         )
     }
