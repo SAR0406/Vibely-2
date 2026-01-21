@@ -299,12 +299,13 @@ export function MessageBubble({
                         </div>
                     </div>
                 </div>
-                <ReportModal
-                    isOpen={isReportOpen}
-                    onClose={() => setIsReportOpen(false)}
-                    type="message"
-                    targetId={message.id}
-                />
+            </div>
+            <ReportModal
+                isOpen={isReportOpen}
+                onClose={() => setIsReportOpen(false)}
+                type="message"
+                targetId={message.id}
+            />
         </motion.div>
     )
 }
