@@ -31,6 +31,7 @@ import { Lightbox } from "@/components/ui/lightbox"
 import { ChatSkeleton } from "@/components/skeletons/chat-skeleton"
 import { SmartReplies } from "./smart-replies"
 import { ProfileModal } from "./profile-modal"
+import { ReportModal } from "../shared/report-modal"
 
 const EmojiPicker = dynamic(
     () => import('emoji-picker-react'),
