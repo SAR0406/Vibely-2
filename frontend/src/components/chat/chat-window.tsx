@@ -59,6 +59,7 @@ export function ChatWindow() {
     const [inputValue, setInputValue] = React.useState("")
     const [remoteTyping, setRemoteTyping] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
+    const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false)
     const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
     const scrollRef = React.useRef<HTMLDivElement>(null)
     const fileInputRef = React.useRef<HTMLInputElement>(null)
