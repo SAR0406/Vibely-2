@@ -32,8 +32,16 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
-  --color-glass: hsla(0, 0%, 100%, 0.05);
-  --color-glass-border: hsla(0, 0%, 100%, 0.1);
+  /* New Semantic Utilities */
+  --color-canvas: hsl(var(--bg-canvas));
+  --color-surface: hsl(var(--bg-surface));
+  --color-surface-elevated: hsl(var(--bg-surface-elevated));
+
+  --color-brand-500: hsl(var(--p-brand-500));
+  --color-brand-600: hsl(var(--p-brand-600));
+
+  --color-glass: var(--glass-surface);
+  --color-glass-border: var(--glass-border);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -125,90 +133,156 @@
 }
 
 @layer base {
-
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
-}
-
-@layer base {
   :root {
-    /* Base - Deep Space Black */
-    --background: 240 10% 2%;
-    /* #050505 - Almost pure black */
-    --foreground: 0 0% 98%;
+    /* -------------------------------------------------------------------------- */
+    /* PRIMITIVE TOKENS (Palette)                                                */
+    /* -------------------------------------------------------------------------- */
 
-    /* Cards - Slightly lighter but still deep */
-    --card: 240 10% 4%;
-    --card-foreground: 0 0% 98%;
+    /* Neutrals (Deep Space) */
+    --p-neutral-0: 0 0% 100%;
+    --p-neutral-50: 210 40% 98%;
+    --p-neutral-100: 210 40% 96%;
+    --p-neutral-200: 214 32% 91%;
+    --p-neutral-300: 213 27% 84%;
+    --p-neutral-400: 215 20% 65%;
+    --p-neutral-500: 215 16% 47%;
+    --p-neutral-600: 215 19% 35%;
+    --p-neutral-700: 215 25% 27%;
+    --p-neutral-800: 240 5% 15%;
+    /* Muted Zinc */
+    --p-neutral-850: 240 5% 12%;
+    /* Darker UI Elements */
+    --p-neutral-900: 240 10% 4%;
+    /* Deep Cards */
+    --p-neutral-950: 240 10% 2%;
+    /* Almost Black Background */
+    --p-neutral-1000: 0 0% 0%;
 
-    /* Popovers - Glassy feel handled by bg-opacity usually, but base color here */
-    --popover: 240 10% 4%;
-    --popover-foreground: 0 0% 98%;
+    /* Brand: Electric Violet */
+    --p-brand-50: 255 100% 97%;
+    --p-brand-500: 252 87% 67%;
+    /* Main Brand Color */
+    --p-brand-600: 252 80% 60%;
+    --p-brand-900: 252 80% 20%;
 
-    /* Primary - Electric Violet / Indigo */
-    --primary: 252 87% 67%;
-    /* #8b5cf6 - Vivid Violet */
-    --primary-foreground: 0 0% 100%;
+    /* Accent: Hot Pink */
+    --p-accent-500: 330 85% 60%;
 
-    /* Secondary - Muted Zinc */
-    --secondary: 240 5% 15%;
-    --secondary-foreground: 0 0% 98%;
+    /* Functional Colors */
+    --p-success-500: 142 76% 36%;
+    --p-warning-500: 38 92% 50%;
+    --p-danger-500: 0 84% 60%;
 
-    /* Muted - For subtle text */
-    --muted: 240 5% 15%;
-    --muted-foreground: 240 5% 60%;
+    /* -------------------------------------------------------------------------- */
+    /* SEMANTIC TOKENS (Intent)                                                  */
+    /* -------------------------------------------------------------------------- */
 
-    /* Accent - Hot Pink for notifications/special actions */
-    --accent: 330 85% 60%;
-    /* Vibrant Pink */
-    --accent-foreground: 0 0% 100%;
+    /* Backgrounds */
+    --bg-canvas: var(--p-neutral-950);
+    --bg-surface: var(--p-neutral-900);
+    --bg-surface-elevated: var(--p-neutral-850);
 
-    /* Destructive - Red */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    /* Text */
+    --text-primary: var(--p-neutral-50);
+    /* High Contrast */
+    --text-secondary: var(--p-neutral-300);
+    /* Muted */
+    --text-tertiary: var(--p-neutral-500);
+    /* Disabled/Subtle */
 
-    /* Borders - Subtle and glassy */
-    --border: 240 5% 12%;
-    --input: 240 5% 12%;
-    --ring: 252 87% 67%;
-    /* Matches Primary */
+    /* Borders */
+    --border-subtle: var(--p-neutral-850);
+    --border-strong: var(--p-neutral-700);
+
+    /* Brand Mapping */
+    --brand-primary: var(--p-brand-500);
+    --brand-contrast: var(--p-neutral-0);
+
+    /* System Mappings required by Shadcn/Tailwind */
+    --background: var(--bg-canvas);
+    --foreground: var(--p-neutral-50);
+
+    --card: var(--bg-surface);
+    --card-foreground: var(--text-primary);
+
+    --popover: var(--bg-surface);
+    --popover-foreground: var(--text-primary);
+
+    --primary: var(--brand-primary);
+    --primary-foreground: var(--brand-contrast);
+
+    --secondary: var(--p-neutral-800);
+    --secondary-foreground: var(--text-primary);
+
+    --muted: var(--p-neutral-800);
+    --muted-foreground: var(--text-tertiary);
+
+    --accent: var(--p-accent-500);
+    --accent-foreground: var(--p-neutral-0);
+
+    --destructive: var(--p-danger-500);
+    --destructive-foreground: var(--p-neutral-0);
+
+    --border: var(--border-subtle);
+    --input: var(--border-subtle);
+    --ring: var(--brand-primary);
 
     --radius: 1.25rem;
-    /* Modern rounded look */
+
+    /* -------------------------------------------------------------------------- */
+    /* COMPONENT TOKENS (Specific Contexts)                                      */
+    /* -------------------------------------------------------------------------- */
+
+    --glass-surface: hsla(0, 0%, 100%, 0.05);
+    --glass-border: hsla(0, 0%, 100%, 0.1);
+    --glass-highlight: hsla(0, 0%, 100%, 0.15);
   }
 
-  /* Force Dark Mode Default */
+  /* -------------------------------------------------------------------------- */
+  /* THEME: LIGHT MODE (Inverted Primitives)                                    */
+  /* -------------------------------------------------------------------------- */
   .light {
-    --background: 210 40% 98%;
-    /* Ultra Soft Blue-White */
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 221.2 83.2% 53.3%;
-    /* Premium Blue */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 1.25rem;
+    --bg-canvas: var(--p-neutral-50);
+    --bg-surface: var(--p-neutral-0);
+    --bg-surface-elevated: var(--p-neutral-100);
 
-    --color-glass: hsla(0, 0%, 100%, 0.7);
-    --color-glass-border: hsla(0, 0%, 0%, 0.05);
+    --text-primary: var(--p-neutral-900);
+    --text-secondary: var(--p-neutral-600);
+    --text-tertiary: var(--p-neutral-400);
+
+    --border-subtle: var(--p-neutral-200);
+
+    --brand-primary: 252 87% 60%;
+    /* Slightly darker for contrast on white */
+
+    /* Update System Mappings */
+    --background: var(--bg-canvas);
+    --foreground: var(--text-primary);
+
+    --card: var(--bg-surface);
+    --card-foreground: var(--text-primary);
+
+    --popover: var(--bg-surface);
+    --popover-foreground: var(--text-primary);
+
+    --primary: var(--brand-primary);
+    --primary-foreground: var(--p-neutral-0);
+
+    --secondary: var(--p-neutral-200);
+    --secondary-foreground: var(--text-primary);
+
+    --muted: var(--p-neutral-100);
+    --muted-foreground: var(--text-tertiary);
+
+    --accent: var(--p-neutral-100);
+    --accent-foreground: var(--text-primary);
+
+    --border: var(--border-subtle);
+    --input: var(--border-subtle);
+
+    --glass-surface: hsla(0, 0%, 0%, 0.03);
+    --glass-border: hsla(0, 0%, 0%, 0.1);
+    --glass-highlight: hsla(0, 0%, 0%, 0.05);
   }
 }
 

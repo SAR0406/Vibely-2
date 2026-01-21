@@ -11,13 +11,13 @@ interface GlassCardProps extends HTMLMotionProps<"div"> {
 }
 
 export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
-    ({ className, variant = "default", hoverEffect = true, gradient = false, children, ...props }, ref) => {
+    ({ className, variant = "default", hoverEffect = true, gradient = false, children, role = "region", ...props }, ref) => {
 
         const variants = {
-            default: "bg-white/[0.03] border-white/10 shadow-2xl backdrop-blur-xl",
-            neon: "bg-[#0a0a0a]/80 border-primary/20 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-2xl",
+            default: "bg-surface border-border shadow-2xl backdrop-blur-xl",
+            neon: "bg-surface-elevated/80 border-primary/20 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-2xl",
             minimal: "bg-transparent border-white/5 backdrop-blur-lg",
-            deep: "bg-black/60 border-white/5 backdrop-blur-3xl"
+            deep: "bg-canvas/60 border-white/5 backdrop-blur-3xl"
         }
 
         const gradientOverlay = gradient ? (
@@ -27,10 +27,14 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
         return (
             <motion.div
                 ref={ref}
+                role={role}
+                tabIndex={0}
                 whileHover={hoverEffect ? { y: -2, scale: 1.005 } : undefined}
                 className={cn(
-                    "relative rounded-3xl border overflow-hidden",
+                    "relative rounded-3xl border overflow-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none", // Reduced motion handled by global css or preferences usually, but good to have standard focus
                     variants[variant],
+                    // A11y: High contrast border for forced-colors mode
+                    "forced-colors:border-[CanvasText]",
                     hoverEffect && "transition-all duration-300 hover:border-white/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]",
                     className
                 )}
