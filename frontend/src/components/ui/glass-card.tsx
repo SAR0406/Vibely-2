@@ -6,8 +6,9 @@ import { motion, HTMLMotionProps } from "framer-motion"
 
 interface GlassCardProps extends HTMLMotionProps<"div"> {
     variant?: "default" | "neon" | "minimal" | "deep"
-    hoverEffect?: boolean,
+    hoverEffect?: boolean
     gradient?: boolean
+    children?: React.ReactNode
 }
 
 export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
