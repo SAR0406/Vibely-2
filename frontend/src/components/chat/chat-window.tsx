@@ -38,6 +38,7 @@ import { ChatSkeleton } from "@/components/skeletons/chat-skeleton"
 import { SmartReplies } from "./smart-replies"
 import { ProfileModal } from "./profile-modal"
 import { ReportModal } from "../shared/report-modal"
+import { TypingIndicator } from "./typing-indicator"
 
 const EmojiPicker = dynamic(
     () => import('emoji-picker-react'),
@@ -566,17 +567,8 @@ export function ChatWindow() {
                         })}
                     </AnimatePresence>
 
-                    {remoteTyping && (
-                        <motion.div
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="bg-white/[0.03] border border-white/10 w-fit px-5 py-4 rounded-[2rem] rounded-tl-none ml-14 mt-2 flex gap-1.5 items-center shadow-2xl backdrop-blur-xl"
-                        >
-                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce [animation-delay:-0.32s] shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                            <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.16s] shadow-[0_0_8px_rgba(129,140,248,0.8)]" />
-                            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce shadow-[0_0_8px_rgba(167,139,250,0.8)]" />
-                        </motion.div>
-                    )}
+                    <TypingIndicator />
+            )}
                 </div>
             </ScrollArea>
 
