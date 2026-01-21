@@ -41,7 +41,7 @@ import { cn } from "@/lib/utils"
 
 // If you have a stronger "User" type in your app, replace this with it.
 // This minimal shape avoids importing next-auth/other libs here.
-type MinimalUser = { name?: string | null; email?: string | null; image?: string | null }
+type MinimalUser = { name?: string | null; email?: string | null; image?: string | null; avatar?: string | null }
 
 interface SettingsModalProps {
   open: boolean
@@ -133,7 +133,7 @@ export function SettingsModal({
             {currentUser && (
               <div className="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5">
                 <Avatar size="md">
-                  <AvatarImage src={currentUser.image || undefined} />
+                  <AvatarImage src={currentUser.avatar || currentUser.image || undefined} />
                   <AvatarFallback className="bg-zinc-900">{currentUser.name?.[0]}</AvatarFallback>
                 </Avatar>
                 <div className="text-left">
