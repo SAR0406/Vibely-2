@@ -241,6 +241,9 @@
   /* -------------------------------------------------------------------------- */
   /* THEME: LIGHT MODE (Inverted Primitives)                                    */
   /* -------------------------------------------------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /* THEME: LIGHT MODE (Inverted Primitives)                                    */
+  /* -------------------------------------------------------------------------- */
   .light {
     --bg-canvas: var(--p-neutral-50);
     --bg-surface: var(--p-neutral-0);
@@ -280,9 +283,11 @@
     --border: var(--border-subtle);
     --input: var(--border-subtle);
 
-    --glass-surface: hsla(0, 0%, 0%, 0.03);
-    --glass-border: hsla(0, 0%, 0%, 0.1);
-    --glass-highlight: hsla(0, 0%, 0%, 0.05);
+    --glass-surface: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-highlight: rgba(255, 255, 255, 0.5);
+
+    --neumorphic-shadow: 5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff;
   }
 }
 

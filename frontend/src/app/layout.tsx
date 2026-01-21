@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${outfit.variable} ${inter.variable} antialiased bg-background text-foreground`}
+        className={`${outfit.variable} ${inter.variable} antialiased bg-background text-foreground bg-gradient-to-br from-background to-background dark:from-background dark:to-background light:from-gray-50 light:to-gray-100 min-h-screen`}
         suppressHydrationWarning
       >
         {/* ✅ ORDER MATTERS */}

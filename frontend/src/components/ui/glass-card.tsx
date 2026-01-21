@@ -15,10 +15,10 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
     ({ className, variant = "default", hoverEffect = true, gradient = false, children, role = "region", ...props }, ref) => {
 
         const variants = {
-            default: "bg-surface/50 border-glass-border shadow-2xl backdrop-blur-xl", // Changed border-border to border-glass-border
-            neon: "bg-surface-elevated/80 border-primary/20 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-2xl",
+            default: "bg-surface/50 dark:bg-surface/50 light:bg-glass-surface border-glass-border shadow-2xl backdrop-blur-xl dark:shadow-none light:shadow-neumorphic-shadow",
+            neon: "bg-surface-elevated/80 dark:bg-surface-elevated/80 light:bg-white/80 border-primary/20 dark:shadow-[0_0_15px_rgba(139,92,246,0.1)] light:shadow-[0_0_15px_rgba(139,92,246,0.2)] backdrop-blur-2xl",
             minimal: "bg-transparent border-glass-border backdrop-blur-lg",
-            deep: "bg-canvas/60 border-glass-border backdrop-blur-3xl"
+            deep: "bg-canvas/60 dark:bg-canvas/60 light:bg-white/40 border-glass-border backdrop-blur-3xl"
         }
 
         const gradientOverlay = gradient ? (
