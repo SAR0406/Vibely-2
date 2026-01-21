@@ -23,7 +23,7 @@ export default function EventLandingPage() {
             opacity: 1,
             transition: {
                 duration: 0.8,
-                ease: [0.6, 0.01, -0.05, 0.95],
+                ease: "easeOut",
             },
         },
     };
@@ -64,29 +64,29 @@ export default function EventLandingPage() {
                 </div>
 
                 <motion.div
-                    variants={containerVariants}
+                    variants={containerVariants as any}
                     initial="hidden"
                     animate="visible"
                     className="max-w-7xl mx-auto text-center"
                 >
-                    <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] uppercase tracking-widest font-bold text-white/60 mb-8">
+                    <motion.div variants={itemVariants as any} className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] uppercase tracking-widest font-bold text-white/60 mb-8">
                         <Zap className="w-3 h-3 text-purple-400" />
                         Announcing Vibely 2.0: The Grand Reveal
                     </motion.div>
 
                     <motion.h1
-                        variants={itemVariants}
+                        variants={itemVariants as any}
                         className="text-6xl md:text-8xl font-bold tracking-tight mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40 leading-tight"
                     >
                         The Social Future <br /> Is Here.
                     </motion.h1>
 
-                    <motion.p variants={itemVariants} className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-12 leading-relaxed">
+                    <motion.p variants={itemVariants as any} className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-12 leading-relaxed">
                         Experience the world's most creative social platform. Now with AI-integrated matching,
                         premium glassmorphism UI, and real-time voice huddles.
                     </motion.p>
 
-                    <motion.div variants={itemVariants} className="flex flex-col md:flex-row items-center justify-center gap-4">
+                    <motion.div variants={itemVariants as any} className="flex flex-col md:flex-row items-center justify-center gap-4">
                         <Link href="/signup">
                             <motion.button
                                 whileHover={{ y: -5, boxShadow: '0 0 20px rgba(139, 92, 246, 0.4)' }}
@@ -103,7 +103,7 @@ export default function EventLandingPage() {
 
                     {/* Cinematic Image Mockup */}
                     <motion.div
-                        variants={itemVariants}
+                        variants={itemVariants as any}
                         className="mt-20 relative px-4"
                     >
                         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />

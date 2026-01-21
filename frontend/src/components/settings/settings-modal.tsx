@@ -25,6 +25,7 @@ import {
   Volume2,
   VolumeX,
   Check,
+  Zap,
   Image as ImageIcon,
   Activity,
   Server,
@@ -71,7 +72,7 @@ const ACCENT_COLORS: { value: AccentColor; label: string; class: string }[] = [
   { value: "gold", label: "Gold", class: "bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600" },
 ]
 
-const WALLPAPERS: { value: Wallpaper; label: string; preview?: string }[] = [
+const WALLPAPERS: { value: Wallpaper; label: string; preview?: string; isPro?: boolean }[] = [
   { value: "default", label: "Deep Space" },
   { value: "grid", label: "Cyber Grid" },
   { value: "dots", label: "Polka Dots" },

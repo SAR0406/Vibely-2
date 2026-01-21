@@ -1,48 +1,85 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+'use client';
 
-export default function Home() {
+import React from 'react';
+import { HeroSection } from '@/components/landing/hero-section';
+import { FeatureBento } from '@/components/landing/feature-bento';
+import { NexusCoreVisual } from '@/components/landing/nexus-core-visual';
+import { PricingCards } from '@/components/landing/pricing-cards';
+import { Sparkles, ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
+
+export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-[#0a0a0a] overflow-hidden relative">
-      {/* Background Gradients */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] left-[20%] w-[60%] h-[60%] bg-indigo-600/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px]" />
-      </div>
-
-      <div className="z-10 flex flex-col items-center text-center max-w-4xl space-y-8 animate-in fade-in zoom-in duration-700">
-        {/* Badge */}
-        <div className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-white/80 shadow-xl backdrop-blur-md">
-          ✨ Experience the future of connection
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-cyan-500/30">
+      {/* Global Navbar */}
+      <nav className="fixed top-0 w-full z-[100] px-8 py-6 flex justify-between items-center transition-all duration-300">
+        <div className="flex items-center gap-2 group cursor-pointer">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
+            <img src="/nexus-core.png" className="w-6 h-6" alt="Nexus" />
+          </div>
+          <span className="text-xl font-bold tracking-tight">nexus.</span>
         </div>
 
-        {/* Hero Text */}
-        <h1 className="text-6xl md:text-8xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/50 pb-2">
-          Vibely
-        </h1>
-        <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl leading-relaxed">
-          The premium real-time chat application designed for those who value <span className="text-indigo-400">aesthetics</span> and <span className="text-purple-400">performance</span>.
-        </p>
+        <div className="hidden lg:flex items-center gap-10 text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+          <a href="#features" className="hover:text-white transition-colors">Instrumental Features</a>
+          <a href="#pricing" className="hover:text-white transition-colors">Nexus Pass</a>
+          <a href="#" className="hover:text-white transition-colors">Developer Core</a>
+        </div>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-8">
-          <Link href="/login">
-            <Button size="lg" className="h-14 px-8 text-lg rounded-full bg-white text-black hover:bg-zinc-200 transition-colors">
-              Get Started
-            </Button>
+        <div className="flex items-center gap-6">
+          <Link href="/login" className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500 hover:text-white transition-colors">
+            Sign In
           </Link>
-          <Link href="/chat">
-            <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 backdrop-blur-sm">
-              View Demo
-            </Button>
+          <Link href="/signup">
+            <button className="px-6 py-3 rounded-xl bg-white text-black text-[11px] font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all">
+              Join the Pass
+            </button>
           </Link>
         </div>
-      </div>
+      </nav>
 
-      {/* Footer */}
-      <div className="absolute bottom-6 text-zinc-600 text-sm">
-        © 2026 Vibely Inc. Crafted with precision.
-      </div>
+      <main>
+        <HeroSection />
+
+        <NexusCoreVisual />
+
+        <FeatureBento />
+
+        <PricingCards />
+
+        {/* Final CTA Section */}
+        <section className="py-40 px-6 bg-gradient-to-b from-transparent to-zinc-900/20">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-5xl md:text-7xl font-bold mb-10 tracking-tight">The social layer <br /> of the future.</h2>
+            <Link href="/signup">
+              <button className="group relative px-12 py-6 rounded-[2rem] bg-indigo-600 text-white font-bold text-xl overflow-hidden shadow-2xl shadow-indigo-500/40">
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                <span className="relative flex items-center gap-3">
+                  Become a NEXUS Holder
+                  <ArrowUpRight className="w-6 h-6" />
+                </span>
+              </button>
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      {/* Premium Footer */}
+      <footer className="py-20 border-t border-white/5 px-8 flex flex-col md:flex-row justify-between items-center gap-10">
+        <div className="flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-600">
+          <span>Vibely Labs</span>
+          <span>Privacy Protocol</span>
+          <span>License</span>
+        </div>
+        <div className="text-[10px] text-zinc-600 font-mono">
+          NEURAL-SYNC STATUS: OPTIMIZED (18ms)
+        </div>
+        <div className="flex gap-6">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/5 hover:border-white/10 transition-colors" />
+          ))}
+        </div>
+      </footer>
     </div>
   );
 }
