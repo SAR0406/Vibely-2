@@ -1,13 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { MoreVertical, Reply, Download, Play, Pause, FileText, Check, CheckCheck, Smile } from "lucide-react"
+import { Flag, MoreVertical, Reply, Download, Play, Pause, FileText, Check, CheckCheck, Smile } from "lucide-react"
 import EmojiPicker, { Theme, EmojiClickData, EmojiStyle } from 'emoji-picker-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/design-system/avatar"
 import { cn } from "@/lib/utils"
 import { formatMessageTime } from "@/lib/date-utils"
 import { MessageReactions } from "./message-reactions"
 import { Button } from "@/components/design-system/button"
+import { ReportModal } from "../shared/report-modal"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -45,6 +46,7 @@ export function MessageBubble({
 }: MessageBubbleProps) {
     const [isPlaying, setIsPlaying] = React.useState(false)
     const [showPicker, setShowPicker] = React.useState(false)
+    const [isReportOpen, setIsReportOpen] = React.useState(false)
     const audioRef = React.useRef<HTMLAudioElement>(null)
 
     const toggleAudio = () => {
@@ -266,9 +268,36 @@ export function MessageBubble({
                         >
                             <Reply className="h-4 w-4 text-zinc-400 group-hover/btn:text-indigo-400 transition-colors" />
                         </Button>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="glass"
+                                    size="icon"
+                                    className="h-9 w-9 rounded-2xl bg-zinc-900 shadow-2xl border border-white/10 hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all group/btn"
+                                >
+                                    <MoreVertical className="h-4 w-4 text-zinc-400 group-hover/btn:text-white transition-colors" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="bg-[#09090b]/90 backdrop-blur-2xl border-white/5 text-white rounded-2xl p-1.5 min-w-[160px] shadow-2xl">
+                                <DropdownMenuItem
+                                    className="rounded-xl flex items-center gap-3 py-2.5 focus:bg-rose-500/10 focus:text-rose-400 cursor-pointer text-xs font-bold uppercase tracking-widest text-zinc-400"
+                                    onClick={() => setIsReportOpen(true)}
+                                >
+                                    <Flag className="w-4 h-4" />
+                                    Report Signal
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>
+            <ReportModal
+                isOpen={isReportOpen}
+                onClose={() => setIsReportOpen(false)}
+                type="message"
+                targetId={message.id}
+            />
         </motion.div>
     )
 }

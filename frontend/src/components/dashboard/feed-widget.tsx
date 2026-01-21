@@ -4,12 +4,14 @@ import * as React from "react"
 import { motion } from "framer-motion"
 import { Heart, MessageCircle, Share2, Send, Image as ImageIcon } from "lucide-react"
 import { feedApi } from "@/services/api"
+import { useChatStore } from "@/store/use-chat-store"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/design-system/avatar"
 import { Button } from "@/components/design-system/button"
 import { cn } from "@/lib/utils"
 import { formatDistanceToNow } from "date-fns"
 
 export function FeedWidget() {
+    const { currentUser } = useChatStore()
     const [posts, setPosts] = React.useState<any[]>([])
     const [newPostContent, setNewPostContent] = React.useState("")
     const [isLoading, setIsLoading] = React.useState(true)

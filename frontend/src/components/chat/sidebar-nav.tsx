@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Home, Search, Bell, Settings, LogOut } from "lucide-react";
+import { Home, Search, Bell, Settings, LogOut, Calendar, Shield, Flag } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/design-system/button";
@@ -21,6 +21,7 @@ import {
 
 import { useChatStore } from "@/store/use-chat-store";
 import { SettingsModal } from "../settings/settings-modal";
+import { ReportModal } from "../shared/report-modal";
 
 /**
  * Minimal user shape used locally so this component doesn't depend on
@@ -33,10 +34,10 @@ type UserLike = {
 };
 
 const NAV_ITEMS = [
-  { id: "chat", label: "Chats", path: "/chat", icon: Home },
-  { id: "search", label: "Explore", path: "/search", icon: Search },
-  { id: "requests", label: "Requests", path: "/requests", icon: Bell },
-  // settings opens the modal so path can be empty or the settings route if you have one
+  { id: "dashboard", label: "Nexus Core", path: "/dashboard", icon: Home },
+  { id: "chat", label: "Signals", path: "/chat", icon: Search }, // Search is used as Explore/Signals
+  { id: "events", label: "Events", path: "/events", icon: Calendar },
+  { id: "nexus", label: "Nexus Hub", path: "/nexus", icon: Shield },
   { id: "settings", label: "Settings", path: "", icon: Settings },
 ] as const;
 
@@ -49,6 +50,7 @@ export function SidebarNav() {
   const user = (currentUser ?? null) as UserLike | null;
 
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+  const [isReportOpen, setIsReportOpen] = React.useState(false);
 
   const handleNavClick = React.useCallback(
     (id: string, path: string) => {
@@ -70,6 +72,11 @@ export function SidebarNav() {
     }
     router.push("/login");
   }, [router]);
+
+  React.useEffect(() => {
+    (window as any).openReportApp = () => setIsReportOpen(true);
+    return () => { delete (window as any).openReportApp; };
+  }, []);
 
   return (
     <>
@@ -96,6 +103,12 @@ export function SidebarNav() {
         open={isSettingsOpen}
         onOpenChange={(open) => setIsSettingsOpen(open)}
         currentUser={user}
+      />
+
+      <ReportModal
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        type="app"
       />
     </>
   );
@@ -192,6 +205,24 @@ function SidebarFooter({ currentUser, onLogout }: SidebarFooterProps) {
 
           <TooltipContent side="right" className="bg-[#18181b] border-white/10 text-red-400 font-medium ml-2">
             Logout
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => (window as any).openReportApp && (window as any).openReportApp()}
+              className="h-10 w-10 rounded-xl text-zinc-500 hover:text-orange-400 hover:bg-orange-400/10 transition-all"
+              aria-label="Report Issue"
+            >
+              <Flag className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+
+          <TooltipContent side="right" className="bg-[#18181b] border-white/10 text-orange-400 font-medium ml-2">
+            Report Anomaly
           </TooltipContent>
         </Tooltip>
 

@@ -117,7 +117,7 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
     };
 
     const filteredFriends = friends.filter(f =>
-        f.name.toLowerCase().includes(searchQuery.toLowerCase())
+        f?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const selectedFriends = friends.filter(f => selectedIds.has(f.id));

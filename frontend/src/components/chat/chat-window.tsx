@@ -60,6 +60,7 @@ export function ChatWindow() {
     const [remoteTyping, setRemoteTyping] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
     const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false)
+    const [isReportModalOpen, setIsReportModalOpen] = React.useState(false)
     const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
     const scrollRef = React.useRef<HTMLDivElement>(null)
     const fileInputRef = React.useRef<HTMLInputElement>(null)
@@ -521,6 +522,14 @@ export function ChatWindow() {
                         <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-500 hover:text-white rounded-2xl">
                             <MoreVertical className="h-5 w-5" />
                         </Button>
+                        <Button
+                            variant="glass"
+                            size="icon"
+                            className="h-10 w-10 text-zinc-500 hover:text-rose-400 hover:bg-rose-400/10 rounded-2xl border-white/5 transition-all"
+                            onClick={() => setIsReportModalOpen(true)}
+                        >
+                            <Flag className="h-4.5 w-4.5" />
+                        </Button>
                     </div>
                 </div>
             </header>
@@ -695,6 +704,13 @@ export function ChatWindow() {
             <ProfileModal
                 isOpen={isProfileModalOpen}
                 onClose={() => setIsProfileModalOpen(false)}
+            />
+            <ReportModal
+                isOpen={isReportModalOpen}
+                onClose={() => setIsReportModalOpen(false)}
+                type="user"
+                targetId={activeChat?.id}
+                targetName={activeChat?.name}
             />
         </div>
     )
