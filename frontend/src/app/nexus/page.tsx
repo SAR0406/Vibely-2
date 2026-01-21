@@ -4,6 +4,7 @@ import * as React from "react"
 import { motion } from "framer-motion"
 import { Shield, Lock, Fingerprint, Cpu, Zap, Activity, Globe, Box } from "lucide-react"
 import { Button } from "@/components/design-system/button"
+import { cn } from "@/lib/utils"
 
 export default function NexusPage() {
     return (
@@ -176,7 +177,7 @@ function ControlPanel({ title, children }: any) {
     return (
         <div className="glass-card p-10 space-y-10 relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            <h3 className="text-lg font-black uppercase tracking-[0.2em] text-white flex items-center gap-4 italic italic">
+            <h3 className="text-lg font-black uppercase tracking-[0.2em] text-white flex items-center gap-4 italic">
                 <span className="w-8 h-[1px] bg-indigo-500/50" />
                 {title}
             </h3>
