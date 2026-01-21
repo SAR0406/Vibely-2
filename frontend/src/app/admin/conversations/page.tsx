@@ -73,6 +73,17 @@ export default function ConversationModeration() {
         }
     }
 
+    const handleDeleteMessage = async (messageId: string) => {
+        if (!confirm("Are you sure you want to delete this message?")) return
+        try {
+            await adminApi.deleteMessage(messageId)
+            setMessages(prev => prev.filter(m => m.id !== messageId))
+        } catch (error) {
+            console.error(error)
+            alert("Failed to delete message")
+        }
+    }
+
     const filteredConversations = conversations.filter(c =>
         c.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.participants.some(p => p.user.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -214,7 +225,12 @@ export default function ConversationModeration() {
                                                             {msg.content}
                                                         </p>
                                                     </div>
-                                                    <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-400">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-400"
+                                                        onClick={() => handleDeleteMessage(msg.id)}
+                                                    >
                                                         <Trash2 className="w-4 h-4" />
                                                     </Button>
                                                 </div>

@@ -6,42 +6,61 @@ export class AdminService {
   constructor(private prisma: PrismaService) { }
 
   async getStats() {
-    const [totalUsers, totalConversations, totalMessages, totalReactions] =
-      await Promise.all([
-        this.prisma.user.count(),
-        this.prisma.conversation.count(),
-        this.prisma.message.count(),
-        this.prisma.reaction.count(),
-      ]);
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30);
 
-    const activeToday = await this.prisma.user.count({
-      where: {
-        lastSeen: {
-          gte: new Date(new Date().setHours(0, 0, 0, 0)),
-        },
-      },
-    });
+    let systemHealth = 'Optimal';
+    try {
+      await this.prisma.$queryRaw`SELECT 1`;
+    } catch (e) {
+      systemHealth = 'Degraded';
+    }
 
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const newUsersThisWeek = await this.prisma.user.count({
-      where: { createdAt: { gte: sevenDaysAgo } },
-    });
+    const [
+      totalUsers,
+      totalConversations,
+      totalMessages,
+      totalReactions,
+      activeToday,
+      newUsersThisWeek,
+      userGrowthRaw,
+      activityRaw
+    ] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.conversation.count(),
+      this.prisma.message.count(),
+      this.prisma.reaction.count(),
+      this.prisma.user.count({ where: { lastSeen: { gte: startOfDay } } }),
+      this.prisma.user.count({ where: { createdAt: { gte: startOfWeek } } }),
+      this.prisma.$queryRaw<any[]>`
+                SELECT TO_CHAR("createdAt", 'YYYY-MM-DD') as date, CAST(COUNT(*) as INTEGER) as users
+                FROM "User"
+                WHERE "createdAt" >= ${startOfMonth}
+                GROUP BY TO_CHAR("createdAt", 'YYYY-MM-DD')
+                ORDER BY date ASC
+            `,
+      this.prisma.$queryRaw<any[]>`
+                SELECT 
+                    TO_CHAR("createdAt", 'YYYY-MM-DD') as date, 
+                    CAST(COUNT(*) as INTEGER) as messages,
+                    CAST(COUNT(DISTINCT "senderId") as INTEGER) as active
+                FROM "Message"
+                WHERE "createdAt" >= ${startOfMonth}
+                GROUP BY TO_CHAR("createdAt", 'YYYY-MM-DD')
+                ORDER BY date ASC
+            `
+    ]);
 
-    const uptime = Math.floor(process.uptime());
+    const userGrowth = userGrowthRaw.map((r: any) => ({ date: r.date, users: Number(r.users) }));
+    const activity = activityRaw.map((r: any) => ({
+      date: r.date,
+      messages: Number(r.messages),
+      active: Number(r.active)
+    }));
+
     const memoryUsage = process.memoryUsage();
-
-    // Mock data for charts (in a real app, this would come from analytics tables)
-    const userGrowth = Array.from({ length: 7 }, (_, i) => ({
-      date: new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'short' }),
-      users: totalUsers - Math.floor(Math.random() * 10 * (6 - i)),
-    }));
-
-    const activityData = Array.from({ length: 7 }, (_, i) => ({
-      date: new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'short' }),
-      messages: Math.floor(Math.random() * 500) + 100,
-      active: Math.floor(Math.random() * 50) + 10,
-    }));
 
     return {
       totalUsers,
@@ -50,16 +69,16 @@ export class AdminService {
       totalReactions,
       activeToday,
       newUsersThisWeek,
-      uptime,
-      systemHealth: 'Optimal',
+      uptime: process.uptime(),
+      systemHealth,
       memory: {
-        rss: Math.round(memoryUsage.rss / 1024 / 1024), // MB
+        rss: Math.round(memoryUsage.rss / 1024 / 1024),
         heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024),
         heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024),
       },
       charts: {
         userGrowth,
-        activity: activityData
+        activity
       }
     };
   }
