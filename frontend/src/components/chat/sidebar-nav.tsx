@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Home, Search, Bell, Settings, LogOut, Calendar, Shield, Flag } from "lucide-react";
+import { Home, Search, Bell, Settings, LogOut, Calendar, Shield, Flag, Users } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/design-system/button";
@@ -22,6 +22,14 @@ import {
 import { useChatStore } from "@/store/use-chat-store";
 import { SettingsModal } from "../settings/settings-modal";
 import { ReportModal } from "../shared/report-modal";
+import { RequestsPanel } from "./requests-panel";
+import { friendsApi } from "@/services/api";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 /**
  * Minimal user shape used locally so this component doesn't depend on
@@ -36,6 +44,7 @@ type UserLike = {
 const NAV_ITEMS = [
   { id: "dashboard", label: "Nexus Core", path: "/dashboard", icon: Home },
   { id: "chat", label: "Sync Grid", path: "/chat", icon: Search },
+  { id: "notifications", label: "Alert Matrix", path: "", icon: Bell },
   { id: "events", label: "Neural Clusters", path: "/events", icon: Calendar },
   { id: "nexus", label: "Quantum Hub", path: "/nexus", icon: Shield },
   { id: "settings", label: "Interface Settings", path: "", icon: Settings },
@@ -51,11 +60,28 @@ export function SidebarNav() {
 
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const [isReportOpen, setIsReportOpen] = React.useState(false);
+  const [requestCount, setRequestCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const fetchRequestCount = async () => {
+      try {
+        const { data } = await friendsApi.getPendingRequests();
+        setRequestCount(data.length);
+      } catch (error) {
+        console.error("Failed to fetch request count:", error);
+      }
+    };
+    fetchRequestCount();
+    const interval = setInterval(fetchRequestCount, 30000); // Poll every 30s
+    return () => clearInterval(interval);
+  }, []);
 
   const handleNavClick = React.useCallback(
     (id: string, path: string) => {
       if (id === "settings") {
         setIsSettingsOpen(true);
+      } else if (id === "notifications") {
+        // Handled directly in NavMenu via Dropdown
       } else if (path) {
         router.push(path);
       }
@@ -94,6 +120,7 @@ export function SidebarNav() {
           pathname={pathname}
           onNavClick={handleNavClick}
           isSettingsOpen={isSettingsOpen}
+          requestCount={requestCount}
         />
 
         <SidebarFooter currentUser={user} onLogout={handleLogout} />
@@ -134,46 +161,76 @@ interface NavMenuProps {
   pathname: string;
   onNavClick: (id: string, path: string) => void;
   isSettingsOpen: boolean;
+  requestCount: number;
 }
 
-function NavMenu({ pathname, onNavClick, isSettingsOpen }: NavMenuProps) {
+function NavMenu({ pathname, onNavClick, isSettingsOpen, requestCount }: NavMenuProps) {
   return (
     <div className="flex-1 flex flex-col items-center gap-3 py-4" role="menu" aria-label="Main navigation">
       <TooltipProvider delayDuration={0}>
         {NAV_ITEMS.map(({ id, path, icon: Icon, label }) => {
           const isActive = id === "settings" ? isSettingsOpen : pathname.startsWith(path);
 
+          const button = (
+            <div className="relative w-full flex justify-center group">
+              {isActive && (
+                <motion.div
+                  layoutId="nav-indicator"
+                  className="absolute left-0 w-1 h-6 bg-indigo-500 rounded-r-full shadow-lg"
+                  transition={{ type: "spring", stiffness: 300, damping: 28 }}
+                />
+              )}
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onNavClick(id, path)}
+                className={cn(
+                  "h-10 w-10 rounded-xl transition-all duration-200 relative",
+                  isActive ? "bg-indigo-500/10 text-indigo-100" : "text-zinc-500 hover:text-zinc-100 hover:bg-white/5"
+                )}
+                aria-pressed={isActive}
+                aria-label={label}
+              >
+                <Icon
+                  className={cn(
+                    "h-5 w-5 transition-transform",
+                    isActive ? "scale-110" : "group-hover:scale-110"
+                  )}
+                />
+
+                {id === "notifications" && requestCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-[9px] font-bold text-white rounded-full flex items-center justify-center border-2 border-[#050505] animate-in zoom-in duration-300">
+                    {requestCount}
+                  </span>
+                )}
+              </Button>
+            </div>
+          );
+
+          if (id === "notifications") {
+            return (
+              <DropdownMenu key={id}>
+                <DropdownMenuTrigger asChild>
+                  {button}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="right" align="start" className="w-80 bg-[#0a0a0a] border-white/10 p-0 shadow-2xl ml-4 overflow-hidden rounded-2xl">
+                  <div className="p-4 border-b border-white/5 bg-white/[0.02]">
+                    <h3 className="text-sm font-bold text-white">Friend Requests</h3>
+                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-0.5">Alert Matrix Status</p>
+                  </div>
+                  <div className="h-[400px]">
+                    <RequestsPanel />
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            );
+          }
+
           return (
             <Tooltip key={id}>
               <TooltipTrigger asChild>
-                <div className="relative w-full flex justify-center group">
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-indicator"
-                      className="absolute left-0 w-1 h-6 bg-indigo-500 rounded-r-full shadow-lg"
-                      transition={{ type: "spring", stiffness: 300, damping: 28 }}
-                    />
-                  )}
-
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onNavClick(id, path)}
-                    className={cn(
-                      "h-10 w-10 rounded-xl transition-all duration-200",
-                      isActive ? "bg-indigo-500/10 text-indigo-100" : "text-zinc-500 hover:text-zinc-100 hover:bg-white/5"
-                    )}
-                    aria-pressed={isActive}
-                    aria-label={label}
-                  >
-                    <Icon
-                      className={cn(
-                        "h-5 w-5 transition-transform",
-                        isActive ? "scale-110" : "group-hover:scale-110"
-                      )}
-                    />
-                  </Button>
-                </div>
+                {button}
               </TooltipTrigger>
 
               <TooltipContent side="right" className="bg-[#18181b] border-white/10 text-zinc-100 font-medium px-3 py-1.5 ml-2">
