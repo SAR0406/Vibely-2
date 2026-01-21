@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ChatLayout } from "@/components/chat/chat-layout"
 import { ChatProvider } from "@/components/chat/chat-provider"
+import { cookieUtils } from "@/lib/cookies"
 
 interface ChatClientProps {
     defaultLayout: number[] | undefined
@@ -16,7 +17,7 @@ export function ChatClient({ defaultLayout, isMobile }: ChatClientProps) {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
+        const token = cookieUtils.getToken()
         if (!token) {
             router.push('/login')
             setIsLoading(false)

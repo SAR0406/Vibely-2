@@ -2,14 +2,14 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { cookieUtils } from "@/lib/cookies"
 
 export default function AdminIndex() {
     const router = useRouter()
 
     useEffect(() => {
-        const userJson = localStorage.getItem('user')
-        if (userJson) {
-            const user = JSON.parse(userJson)
+        const user = cookieUtils.getUser()
+        if (user) {
             if (user.role === 'ADMIN') {
                 router.replace('/admin/dashboard')
             } else {

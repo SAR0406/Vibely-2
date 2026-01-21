@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { cookieUtils } from "@/lib/cookies"
 
 const sidebarItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
@@ -31,9 +32,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
 
     React.useEffect(() => {
-        const userJson = localStorage.getItem('user')
-        if (userJson) {
-            const user = JSON.parse(userJson)
+        const user = cookieUtils.getUser()
+        if (user) {
             if (user.role !== 'ADMIN') {
                 router.push('/chat')
             }
@@ -85,8 +85,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                             variant="ghost"
                             className="w-full justify-start gap-3 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl"
                             onClick={() => {
-                                localStorage.removeItem('token')
-                                localStorage.removeItem('user')
+                                cookieUtils.clearAll()
                                 router.push('/login')
                             }}
                         >

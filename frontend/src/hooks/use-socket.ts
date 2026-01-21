@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useChatStore } from '@/store/use-chat-store';
+import { cookieUtils } from '@/lib/cookies';
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:5000';
 
@@ -9,7 +10,7 @@ export const useSocket = () => {
     const { handleMessageReceived, updateUserStatus, updateMessageStatus } = useChatStore();
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = cookieUtils.getToken();
         if (!token) return;
 
         if (!socketRef.current) {
@@ -60,8 +61,7 @@ export const useSocket = () => {
 
         socket.on('auth:stale', () => {
             console.warn('Authentication stale (user not found in DB). Clearing storage.');
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            cookieUtils.clearAll();
             window.location.href = '/login';
         });
 

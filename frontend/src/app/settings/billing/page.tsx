@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Sparkles, Zap, Shield, CreditCard } from 'lucide-react';
 import axios from 'axios';
+import { cookieUtils } from '@/lib/cookies';
 
 const PLANS = [
     {
@@ -41,7 +42,7 @@ export default function BillingPage() {
 
     useEffect(() => {
         // Fetch current user tier
-        const token = localStorage.getItem('token');
+        const token = cookieUtils.getToken();
         if (token) {
             axios.get('http://localhost:3001/subscription/me', {
                 headers: { Authorization: `Bearer ${token}` }
@@ -54,7 +55,7 @@ export default function BillingPage() {
     const handleUpgrade = async (planId: string) => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
+            const token = cookieUtils.getToken();
             await axios.post('http://localhost:3001/subscription/upgrade', { planId }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -111,10 +112,10 @@ export default function BillingPage() {
                             onClick={() => plan.tier !== currentTier && handleUpgrade(plan.id)}
                             disabled={loading || plan.tier === currentTier}
                             className={`w-full py-4 rounded-2xl font-bold transition-all ${plan.tier === currentTier
-                                    ? 'bg-white/10 text-white/40 cursor-default'
-                                    : plan.popular
-                                        ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                                        : 'bg-white text-black hover:bg-white/90'
+                                ? 'bg-white/10 text-white/40 cursor-default'
+                                : plan.popular
+                                    ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                                    : 'bg-white text-black hover:bg-white/90'
                                 }`}
                         >
                             {plan.tier === currentTier ? 'Active' : plan.cta}

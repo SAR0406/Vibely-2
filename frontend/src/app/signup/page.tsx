@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label"
 
 import { useRouter } from "next/navigation"
 import { authApi } from "@/services/api"
+import { cookieUtils } from "@/lib/cookies"
 
 export default function SignupPage() {
     const router = useRouter()
@@ -30,8 +31,8 @@ export default function SignupPage() {
         setLoading(true)
         try {
             const { data } = await authApi.signup({ name, email, password })
-            localStorage.setItem('token', data.access_token)
-            localStorage.setItem('user', JSON.stringify(data.user))
+            cookieUtils.setToken(data.access_token)
+            cookieUtils.setUser(data.user)
             router.push('/chat')
         } catch (error: any) {
             console.error("Signup failed", error)

@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label"
 
 import { useRouter } from "next/navigation"
 import { authApi } from "@/services/api"
+import { cookieUtils } from "@/lib/cookies"
 
 export default function LoginPage() {
     const router = useRouter()
@@ -33,14 +34,13 @@ export default function LoginPage() {
                 alert("Login failed: No token received. Check your credentials.")
                 return
             }
-            localStorage.setItem('token', data.access_token)
-            localStorage.setItem('user', JSON.stringify(data.user))
+            cookieUtils.setToken(data.access_token)
+            cookieUtils.setUser(data.user)
             // Navigate to chat after setting token
             router.push('/chat')
         } catch (error: any) {
             console.error("Login failed", error)
-            localStorage.removeItem('token')
-            localStorage.removeItem('user')
+            cookieUtils.clearAll()
             const message = error.response?.data?.message || "Invalid credentials. Try again."
             alert(message)
         } finally {

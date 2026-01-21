@@ -1,5 +1,5 @@
-// API service to connect frontend to backend
 import axios from 'axios';
+import { cookieUtils } from '@/lib/cookies';
 
 const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -31,7 +31,7 @@ export const uploadApi = {
 };
 
 api.interceptors.request.use((config) => {
-    const rawToken = localStorage.getItem('token');
+    const rawToken = cookieUtils.getToken();
     const token = rawToken ? rawToken.trim().replace(/^"(.*)"$/, '$1') : null;
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
