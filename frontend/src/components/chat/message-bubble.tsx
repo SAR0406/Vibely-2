@@ -16,6 +16,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { motion } from "framer-motion"
+import { NexusSecurity } from "@/lib/nexus-security"
 
 interface MessageBubbleProps {
     message: any
@@ -201,103 +202,109 @@ export function MessageBubble({
 
                         {/* Timestamp & Status */}
                         <div className={cn(
-                            "flex items-center justify-end gap-2 mt-2 select-none",
+                            "flex items-center justify-between gap-4 mt-2 select-none",
                             isMe ? "text-indigo-100/60" : "text-zinc-600"
                         )}>
-                            <span className="text-[9px] font-mono font-bold tracking-widest uppercase">{formatMessageTime(message.timestamp)}</span>
-                            {isMe && (
-                                <div className={cn("flex transition-colors", message.status === 'seen' ? "text-emerald-400" : "opacity-40")}>
-                                    {message.status === 'seen'
-                                        ? <CheckCheck className="w-3.5 h-3.5 drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]" />
-                                        : <Check className="w-3.5 h-3.5" />
-                                    }
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Reactions Display */}
-                    {message.reactions && message.reactions.length > 0 && (
-                        <div className={cn("absolute -bottom-4 z-20 flex flex-wrap gap-1.5", isMe ? "right-2" : "left-2")}>
-                            <MessageReactions reactions={message.reactions} currentUserId={currentUserId} onReact={(emoji) => onReact(emoji)} />
-                        </div>
-                    )}
-
-                    {/* Actions Menu (Hover) - Premium Floating Style */}
-                    <div className={cn(
-                        "absolute top-1/2 -translate-y-1/2 opacity-0 group-hover/bubble:opacity-100 transition-all duration-300 flex flex-col gap-2 z-10",
-                        isMe ? "-left-14 pr-2" : "-right-14 pl-2"
-                    )}>
-                        <div className="relative">
-                            <Button
-                                variant="glass"
-                                size="icon"
-                                className="h-9 w-9 rounded-2xl bg-zinc-900 shadow-2xl border border-white/10 hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all"
-                                onClick={() => setShowPicker(!showPicker)}
-                            >
-                                <Smile className="h-4 w-4 text-zinc-400 transition-colors group-hover:text-cyan-400" />
-                            </Button>
-                            {showPicker && (
-                                <>
-                                    <div className="fixed inset-0 z-40" onClick={() => setShowPicker(false)} />
-                                    <div className={cn("absolute bottom-11 z-50", isMe ? "right-0" : "left-0")}>
-                                        <div className="shadow-2xl rounded-3xl overflow-hidden border border-white/10 bg-[#0a0a0a] backdrop-blur-2xl">
-                                            <EmojiPicker
-                                                theme={Theme.DARK}
-                                                emojiStyle={EmojiStyle.APPLE}
-                                                onEmojiClick={(emojiData: EmojiClickData) => {
-                                                    onReact(emojiData.emoji);
-                                                    setShowPicker(false);
-                                                }}
-                                                width={300}
-                                                height={400}
-                                                searchDisabled
-                                                skinTonesDisabled
-                                            />
-                                        </div>
+                            <div className="flex items-center gap-2">
+                                <span className="blockchain-hash">
+                                    {NexusSecurity.generateHash(message.content || '', message.senderId || 'anon', new Date(message.timestamp).getTime())}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[9px] font-mono font-bold tracking-widest uppercase">{formatMessageTime(message.timestamp)}</span>
+                                {isMe && (
+                                    <div className={cn("flex transition-colors", message.status === 'seen' ? "text-emerald-400" : "opacity-40")}>
+                                        {message.status === 'seen'
+                                            ? <CheckCheck className="w-3.5 h-3.5 drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]" />
+                                            : <Check className="w-3.5 h-3.5" />
+                                        }
                                     </div>
-                                </>
-                            )}
+                                )}
+                            </div>
                         </div>
 
-                        <Button
-                            variant="glass"
-                            size="icon"
-                            className="h-9 w-9 rounded-2xl bg-zinc-900 shadow-2xl border border-white/10 hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all group/btn"
-                            onClick={() => onReply(message)}
-                        >
-                            <Reply className="h-4 w-4 text-zinc-400 group-hover/btn:text-indigo-400 transition-colors" />
-                        </Button>
+                        {/* Reactions Display */}
+                        {message.reactions && message.reactions.length > 0 && (
+                            <div className={cn("absolute -bottom-4 z-20 flex flex-wrap gap-1.5", isMe ? "right-2" : "left-2")}>
+                                <MessageReactions reactions={message.reactions} currentUserId={currentUserId} onReact={(emoji) => onReact(emoji)} />
+                            </div>
+                        )}
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
+                        {/* Actions Menu (Hover) - Premium Floating Style */}
+                        <div className={cn(
+                            "absolute top-1/2 -translate-y-1/2 opacity-0 group-hover/bubble:opacity-100 transition-all duration-300 flex flex-col gap-2 z-10",
+                            isMe ? "-left-14 pr-2" : "-right-14 pl-2"
+                        )}>
+                            <div className="relative">
                                 <Button
                                     variant="glass"
                                     size="icon"
-                                    className="h-9 w-9 rounded-2xl bg-zinc-900 shadow-2xl border border-white/10 hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all group/btn"
+                                    className="h-9 w-9 rounded-2xl bg-zinc-900 shadow-2xl border border-white/10 hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all"
+                                    onClick={() => setShowPicker(!showPicker)}
                                 >
-                                    <MoreVertical className="h-4 w-4 text-zinc-400 group-hover/btn:text-white transition-colors" />
+                                    <Smile className="h-4 w-4 text-zinc-400 transition-colors group-hover:text-cyan-400" />
                                 </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-[#09090b]/90 backdrop-blur-2xl border-white/5 text-white rounded-2xl p-1.5 min-w-[160px] shadow-2xl">
-                                <DropdownMenuItem
-                                    className="rounded-xl flex items-center gap-3 py-2.5 focus:bg-rose-500/10 focus:text-rose-400 cursor-pointer text-xs font-bold uppercase tracking-widest text-zinc-400"
-                                    onClick={() => setIsReportOpen(true)}
-                                >
-                                    <Flag className="w-4 h-4" />
-                                    Report Signal
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                {showPicker && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={() => setShowPicker(false)} />
+                                        <div className={cn("absolute bottom-11 z-50", isMe ? "right-0" : "left-0")}>
+                                            <div className="shadow-2xl rounded-3xl overflow-hidden border border-white/10 bg-[#0a0a0a] backdrop-blur-2xl">
+                                                <EmojiPicker
+                                                    theme={Theme.DARK}
+                                                    emojiStyle={EmojiStyle.APPLE}
+                                                    onEmojiClick={(emojiData: EmojiClickData) => {
+                                                        onReact(emojiData.emoji);
+                                                        setShowPicker(false);
+                                                    }}
+                                                    width={300}
+                                                    height={400}
+                                                    searchDisabled
+                                                    skinTonesDisabled
+                                                />
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            <Button
+                                variant="glass"
+                                size="icon"
+                                className="h-9 w-9 rounded-2xl bg-zinc-900 shadow-2xl border border-white/10 hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all group/btn"
+                                onClick={() => onReply(message)}
+                            >
+                                <Reply className="h-4 w-4 text-zinc-400 group-hover/btn:text-indigo-400 transition-colors" />
+                            </Button>
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="glass"
+                                        size="icon"
+                                        className="h-9 w-9 rounded-2xl bg-zinc-900 shadow-2xl border border-white/10 hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all group/btn"
+                                    >
+                                        <MoreVertical className="h-4 w-4 text-zinc-400 group-hover/btn:text-white transition-colors" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="bg-[#09090b]/90 backdrop-blur-2xl border-white/5 text-white rounded-2xl p-1.5 min-w-[160px] shadow-2xl">
+                                    <DropdownMenuItem
+                                        className="rounded-xl flex items-center gap-3 py-2.5 focus:bg-rose-500/10 focus:text-rose-400 cursor-pointer text-xs font-bold uppercase tracking-widest text-zinc-400"
+                                        onClick={() => setIsReportOpen(true)}
+                                    >
+                                        <Flag className="w-4 h-4" />
+                                        Report Signal
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <ReportModal
-                isOpen={isReportOpen}
-                onClose={() => setIsReportOpen(false)}
-                type="message"
-                targetId={message.id}
-            />
+                <ReportModal
+                    isOpen={isReportOpen}
+                    onClose={() => setIsReportOpen(false)}
+                    type="message"
+                    targetId={message.id}
+                />
         </motion.div>
     )
 }
