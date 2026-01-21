@@ -1,0 +1,42 @@
+"use client"
+
+import * as React from "react"
+import { cn } from "@/lib/utils"
+import { Button, ButtonProps } from "@/components/ui/button"
+import { motion } from "framer-motion"
+
+interface VibeButtonProps extends ButtonProps {
+    glow?: boolean
+}
+
+export const VibeButton = React.forwardRef<HTMLButtonElement, VibeButtonProps>(
+    ({ className, variant, glow = false, children, ...props }, ref) => {
+        return (
+            <motion.div
+                whileTap={{ scale: 0.96 }}
+                whileHover={{ scale: 1.02 }}
+                className="relative inline-block"
+            >
+                {glow && (
+                    <div className="absolute inset-0 bg-primary/40 blur-xl opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-full" />
+                )}
+                <Button
+                    ref={ref}
+                    className={cn(
+                        "relative",
+                        variant === "default" && "bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-[0_0_20px_rgba(139,92,246,0.3)] border-0",
+                        variant === "outline" && "border-2 border-primary/20 hover:border-primary/50 bg-transparent text-primary hover:bg-primary/5",
+                        variant === "ghost" && "hover:bg-primary/10 text-zinc-400 hover:text-white",
+                        "rounded-xl font-bold tracking-wide transition-all duration-300",
+                        className
+                    )}
+                    variant={variant}
+                    {...props}
+                >
+                    {children}
+                </Button>
+            </motion.div>
+        )
+    }
+)
+VibeButton.displayName = "VibeButton"

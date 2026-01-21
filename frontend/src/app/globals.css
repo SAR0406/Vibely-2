@@ -331,4 +331,12 @@
   .blockchain-hash {
     @apply font-mono text-[8px] opacity-30 hover:opacity-100 transition-opacity uppercase tracking-widest;
   }
+
+  .neon-glow {
+    box-shadow: 0 0 10px theme('colors.primary.DEFAULT'), 0 0 20px theme('colors.primary.DEFAULT');
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px theme('colors.primary.DEFAULT');
+  }
 }
