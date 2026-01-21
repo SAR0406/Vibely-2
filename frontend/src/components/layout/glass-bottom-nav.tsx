@@ -22,7 +22,7 @@ export function GlassBottomNav() {
     return (
         <nav className="fixed bottom-0 left-0 right-0 h-20 bg-[#050505]/80 backdrop-blur-3xl border-t border-white/5 flex items-center justify-around px-6 z-50 pb-safe pb-2 md:hidden">
             {NAV_ITEMS.map(({ id, label, path, icon: Icon }) => {
-                const isActive = pathname.startsWith(path) && path !== "" || (path === "/dashboard" && pathname === "/")
+                const isActive = pathname.startsWith(path) || (path === "/dashboard" && pathname === "/")
 
                 return (
                     <Button
