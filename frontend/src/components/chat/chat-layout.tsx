@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { useWindowSize } from "@/hooks/use-window-size"
 import { useSocket } from "@/providers/SocketProvider"
 import { useChatStore } from "@/store/use-chat-store"

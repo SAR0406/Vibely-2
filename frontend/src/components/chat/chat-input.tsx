@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { motion } from "framer-motion"
 import { Send, Paperclip, Smile, Mic, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/design-system/button"
 import { cn } from "@/lib/utils"
