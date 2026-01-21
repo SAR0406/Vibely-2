@@ -4,7 +4,7 @@ import * as React from "react"
 import { motion } from "framer-motion"
 import { WelcomeHeader } from "../../components/dashboard/welcome-header"
 import { ActiveFriendsList } from "../../components/dashboard/active-friends-list"
-import { VibeStories } from "../../components/dashboard/vibe-stories"
+import { StoryRail } from "../../components/social/story-rail"
 import { FeedWidget } from "../../components/dashboard/feed-widget"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { WeatherWidget, LiveHuddleWidget, MoodAnalyticsWidget } from "../../components/dashboard/nexus-widgets"
@@ -30,7 +30,7 @@ export default function DashboardPage() {
                     <div className="flex flex-col lg:flex-row gap-8 items-start">
                         <div className="flex-1 w-full space-y-8">
                             <WelcomeHeader />
-                            <VibeStories />
+                            <StoryRail />
                         </div>
 
                         {/* Status / Quick Actions Card */}
