@@ -67,119 +67,126 @@ export function MessageBubble({
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.2 }}
+            transition={{ type: "spring", damping: 20, stiffness: 200 }}
             className={cn(
-                "group flex w-full gap-3 relative",
+                "group flex w-full gap-4 relative",
                 isMe ? "flex-row-reverse" : "flex-row",
-                isLastInGroup ? "mb-5" : "mb-1.5"
+                isLastInGroup ? "mb-6" : "mb-1.5"
             )}
         >
             {/* Avatar Gutter */}
-            <div className={cn("flex-shrink-0 w-8 flex flex-col justify-end", isMe ? "items-end" : "items-start")}>
+            <div className={cn("flex-shrink-0 w-10 flex flex-col justify-end", isMe ? "items-end" : "items-start")}>
                 {showAvatar && !isMe ? (
-                    <Avatar className="w-8 h-8 rounded-full ring-2 ring-[#050505]">
-                        <AvatarImage src={senderAvatar} />
-                        <AvatarFallback className="bg-zinc-800 text-zinc-300 text-[10px]">{senderName?.[0]}</AvatarFallback>
-                    </Avatar>
-                ) : <div className="w-8" />}
+                    <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="relative"
+                    >
+                        <div className="absolute inset-0 bg-indigo-500/20 rounded-2xl blur-md" />
+                        <Avatar className="w-10 h-10 rounded-2xl border border-white/10 shadow-xl relative z-10 transition-transform group-hover:rotate-6">
+                            <AvatarImage src={senderAvatar} className="object-cover" />
+                            <AvatarFallback className="bg-zinc-800 text-zinc-400 font-black text-xs uppercase">{senderName?.[0]}</AvatarFallback>
+                        </Avatar>
+                    </motion.div>
+                ) : <div className="w-10" />}
             </div>
 
             {/* Message Content Container */}
-            <div className={cn("flex flex-col max-w-[70%] md:max-w-[65%]", isMe ? "items-end" : "items-start")}>
+            <div className={cn("flex flex-col max-w-[80%] md:max-w-[70%]", isMe ? "items-end" : "items-start")}>
 
                 {/* Sender Name */}
                 {(!isMe && isFirstInGroup && senderName) && (
-                    <span className="text-[11px] text-zinc-500 font-medium ml-1 mb-1 block tracking-tight">
+                    <span className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em] ml-2 mb-2 block">
                         {senderName}
                     </span>
                 )}
 
-                {/* Reply Snippet */}
+                {/* Reply Snippet - Premium Glass Style */}
                 {message.replyTo && (
                     <div
                         onClick={() => onReply(message.replyTo)}
                         className={cn(
-                            "mb-1.5 rounded-xl text-xs p-2.5 border-l-[3px] cursor-pointer transition-all hover:opacity-100 opacity-90 flex flex-col gap-0.5 shadow-sm max-w-full",
+                            "mb-2 rounded-[1.4rem] text-[11px] p-3 border-l-[4px] cursor-pointer transition-all hover:bg-white/5 flex flex-col gap-1 shadow-inner max-w-full backdrop-blur-md",
                             isMe
-                                ? "bg-indigo-500/10 border-indigo-400 text-indigo-100"
-                                : "bg-zinc-800/40 border-zinc-600 text-zinc-400"
+                                ? "bg-indigo-500/10 border-indigo-400 text-indigo-100/60"
+                                : "bg-white/[0.03] border-zinc-700 text-zinc-500"
                         )}
                     >
-                        <span className="font-bold text-[11px]">{message.replyTo.sender?.name || 'User'}</span>
-                        <span className="truncate opacity-80">{message.replyTo.content || 'Attachment'}</span>
+                        <span className="font-black uppercase tracking-widest text-[9px] opacity-100">{message.replyTo.sender?.name || 'Authorized User'}</span>
+                        <span className="truncate font-medium">{message.replyTo.content || 'Data Stream'}</span>
                     </div>
                 )}
 
                 {/* The Bubble */}
-                <div className="relative group/bubble">
+                <div className="relative group/bubble max-w-full">
                     <div
                         className={cn(
-                            "relative px-4 py-2.5 text-[15px] leading-relaxed shadow-sm transition-all duration-200 overflow-hidden",
+                            "relative px-5 py-3.5 text-[15px] leading-relaxed shadow-2xl transition-all duration-300 overflow-hidden",
                             isMe
                                 ? cn(
-                                    "rounded-[20px] rounded-tr-sm",
-                                    !isFirstInGroup && "rounded-tr-[20px]",
+                                    "rounded-[2rem] rounded-tr-sm",
+                                    !isFirstInGroup && "rounded-tr-[2rem]",
                                     !isLastInGroup && "rounded-br-sm",
                                 )
                                 : cn(
-                                    "rounded-[20px] rounded-tl-sm",
-                                    !isFirstInGroup && "rounded-tl-[20px]",
+                                    "rounded-[2rem] rounded-tl-sm",
+                                    !isFirstInGroup && "rounded-tl-[2rem]",
                                     !isLastInGroup && "rounded-bl-sm",
                                 ),
                             isMe
-                                ? "bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/10 border border-white/10"
-                                : "bg-[#18181b]/90 backdrop-blur-md text-zinc-100 border border-white/5 shadow-md"
+                                ? "bg-gradient-to-br from-indigo-600 via-indigo-600 to-indigo-700 text-white border border-white/10 shadow-indigo-500/20"
+                                : "glass-card text-zinc-200 shadow-black/40"
                         )}
                     >
                         {/* Shimmer effect for me messages */}
-                        {isMe && <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover/bubble:opacity-100 transition-opacity duration-700 pointer-events-none" />}
+                        {isMe && <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover/bubble:opacity-100 transition-opacity duration-1000 pointer-events-none" />}
 
                         {/* Image Attachment */}
                         {message.type === 'IMAGE' && (
-                            <div className="-mx-4 -mt-2.5 -mb-2.5 rounded-inherit overflow-hidden bg-black/50 relative group/image">
+                            <div className="-mx-5 -mt-3.5 -mb-3.5 rounded-inherit overflow-hidden bg-black/50 relative group/image shadow-inner">
                                 <img
                                     src={message.attachmentUrl}
                                     alt="attachment"
                                     onClick={() => onImageClick(message.attachmentUrl)}
-                                    className="max-w-full h-auto min-w-[200px] max-h-[400px] object-cover hover:scale-[1.02] transition-transform duration-500 cursor-pointer"
+                                    className="max-w-full h-auto min-w-[240px] max-h-[500px] object-cover hover:scale-[1.03] transition-transform duration-700 cursor-pointer grayscale-[0.1] hover:grayscale-0"
                                 />
-                                <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-colors pointer-events-none" />
+                                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity" />
                             </div>
                         )}
 
                         {/* File Attachment */}
                         {message.type === 'FILE' && (
-                            <div className="flex items-center gap-3 p-1">
-                                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/5">
-                                    <FileText className="w-5 h-5 opacity-90" />
+                            <div className="flex items-center gap-4 p-1">
+                                <div className="w-12 h-12 rounded-[1.2rem] bg-white/5 flex items-center justify-center shrink-0 border border-white/10 shadow-inner group-hover/bubble:bg-white/10 transition-colors">
+                                    <FileText className="w-6 h-6 text-indigo-400" />
                                 </div>
-                                <div className="flex flex-col overflow-hidden min-w-[120px]">
-                                    <span className="font-medium text-sm truncate">{message.content}</span>
-                                    <span className="text-[10px] opacity-70 uppercase tracking-wider font-semibold">File</span>
+                                <div className="flex flex-col overflow-hidden min-w-[150px]">
+                                    <span className="font-bold text-sm tracking-tight truncate">{message.content}</span>
+                                    <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-black mt-0.5">Nexus Data Object</span>
                                 </div>
                                 <a
                                     href={message.attachmentUrl}
                                     download={message.content}
-                                    className="p-2 hover:bg-white/10 rounded-full transition-colors ml-1"
+                                    className="p-3 hover:bg-white/10 rounded-2xl transition-all ml-2 active:scale-90"
                                 >
-                                    <Download className="w-4 h-4" />
+                                    <Download className="w-5 h-5 text-zinc-400" />
                                 </a>
                             </div>
                         )}
 
                         {/* Audio Attachment */}
                         {message.type === 'AUDIO' && (
-                            <div className="flex items-center gap-3 min-w-[240px] py-1">
-                                <button onClick={toggleAudio} className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all active:scale-95 shadow-lg">
-                                    {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
+                            <div className="flex items-center gap-4 min-w-[280px] py-1">
+                                <button onClick={toggleAudio} className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all active:scale-90 shadow-xl border border-white/10">
+                                    {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-1" />}
                                 </button>
-                                <div className="flex-1 flex flex-col gap-1.5">
-                                    <div className="h-1 bg-white/20 rounded-full overflow-hidden">
-                                        <div className={cn("h-full bg-white/90 rounded-full transition-all duration-300 shadow-[0_0_10px_white]", isPlaying ? "w-full animate-[width_2s_linear]" : "w-0")} />
+                                <div className="flex-1 flex flex-col gap-2">
+                                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden shadow-inner">
+                                        <div className={cn("h-full bg-gradient-to-r from-cyan-400 to-indigo-500 rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(34,211,238,0.5)]", isPlaying ? "w-full animate-[width_2s_linear]" : "w-0")} />
                                     </div>
-                                    <span className="text-[10px] font-medium opacity-70 ml-0.5">Voice Message</span>
+                                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-600">Audio Signal Analysis</span>
                                 </div>
                                 <audio ref={audioRef} src={message.attachmentUrl} onEnded={() => setIsPlaying(false)} className="hidden" />
                             </div>
@@ -187,49 +194,52 @@ export function MessageBubble({
 
                         {/* Text Content */}
                         {(message.type === 'TEXT' || message.type === null) && (
-                            <p className="whitespace-pre-wrap break-words">{message.content}</p>
+                            <p className="whitespace-pre-wrap break-words font-medium tracking-tight leading-[1.6]">{message.content}</p>
                         )}
 
                         {/* Timestamp & Status */}
                         <div className={cn(
-                            "flex items-center justify-end gap-1 mt-1 select-none",
-                            isMe ? "text-indigo-100/70" : "text-zinc-500"
+                            "flex items-center justify-end gap-2 mt-2 select-none",
+                            isMe ? "text-indigo-100/60" : "text-zinc-600"
                         )}>
-                            <span className="text-[10px] font-medium tracking-tight">{formatMessageTime(message.timestamp)}</span>
+                            <span className="text-[9px] font-mono font-bold tracking-widest uppercase">{formatMessageTime(message.timestamp)}</span>
                             {isMe && (
-                                <span className={cn("ml-0.5", message.status === 'seen' ? "text-indigo-200" : "opacity-70")}>
-                                    {message.status === 'seen' ? <CheckCheck className="w-3 h-3" /> : <Check className="w-3 h-3" />}
-                                </span>
+                                <div className={cn("flex transition-colors", message.status === 'seen' ? "text-emerald-400" : "opacity-40")}>
+                                    {message.status === 'seen'
+                                        ? <CheckCheck className="w-3.5 h-3.5 drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]" />
+                                        : <Check className="w-3.5 h-3.5" />
+                                    }
+                                </div>
                             )}
                         </div>
                     </div>
 
                     {/* Reactions Display */}
                     {message.reactions && message.reactions.length > 0 && (
-                        <div className={cn("absolute -bottom-3 z-20 flex flex-wrap gap-1 filter drop-shadow-md", isMe ? "right-0" : "left-0")}>
+                        <div className={cn("absolute -bottom-4 z-20 flex flex-wrap gap-1.5", isMe ? "right-2" : "left-2")}>
                             <MessageReactions reactions={message.reactions} currentUserId={currentUserId} onReact={(emoji) => onReact(emoji)} />
                         </div>
                     )}
 
-                    {/* Actions Menu (Hover) */}
+                    {/* Actions Menu (Hover) - Premium Floating Style */}
                     <div className={cn(
-                        "absolute top-0 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-1 z-10",
-                        isMe ? "-left-20 top-0.5" : "-right-20 top-0.5"
+                        "absolute top-1/2 -translate-y-1/2 opacity-0 group-hover/bubble:opacity-100 transition-all duration-300 flex flex-col gap-2 z-10",
+                        isMe ? "-left-14 pr-2" : "-right-14 pl-2"
                     )}>
                         <div className="relative">
                             <Button
                                 variant="glass"
                                 size="icon"
-                                className="h-8 w-8 rounded-full bg-[#1e1e24]/90 border border-white/10 hover:bg-zinc-700 hover:scale-105 transition-all shadow-xl"
+                                className="h-9 w-9 rounded-2xl bg-zinc-900 shadow-2xl border border-white/10 hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all"
                                 onClick={() => setShowPicker(!showPicker)}
                             >
-                                <Smile className="h-4 w-4 text-zinc-400 group-hover:text-zinc-100" />
+                                <Smile className="h-4 w-4 text-zinc-400 transition-colors group-hover:text-cyan-400" />
                             </Button>
                             {showPicker && (
                                 <>
                                     <div className="fixed inset-0 z-40" onClick={() => setShowPicker(false)} />
-                                    <div className="absolute top-10 right-0 z-50">
-                                        <div className="shadow-2xl rounded-2xl overflow-hidden border border-white/10 bg-[#18181b]">
+                                    <div className={cn("absolute bottom-11 z-50", isMe ? "right-0" : "left-0")}>
+                                        <div className="shadow-2xl rounded-3xl overflow-hidden border border-white/10 bg-[#0a0a0a] backdrop-blur-2xl">
                                             <EmojiPicker
                                                 theme={Theme.DARK}
                                                 emojiStyle={EmojiStyle.APPLE}
@@ -237,8 +247,8 @@ export function MessageBubble({
                                                     onReact(emojiData.emoji);
                                                     setShowPicker(false);
                                                 }}
-                                                width={280}
-                                                height={350}
+                                                width={300}
+                                                height={400}
                                                 searchDisabled
                                                 skinTonesDisabled
                                             />
@@ -251,35 +261,11 @@ export function MessageBubble({
                         <Button
                             variant="glass"
                             size="icon"
-                            className="h-8 w-8 rounded-full bg-[#1e1e24]/90 border border-white/10 hover:bg-zinc-700 hover:scale-105 transition-all shadow-xl"
+                            className="h-9 w-9 rounded-2xl bg-zinc-900 shadow-2xl border border-white/10 hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all group/btn"
                             onClick={() => onReply(message)}
                         >
-                            <Reply className="h-4 w-4 text-zinc-400 group-hover:text-zinc-100" />
+                            <Reply className="h-4 w-4 text-zinc-400 group-hover/btn:text-indigo-400 transition-colors" />
                         </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="glass"
-                                    size="icon"
-                                    className="h-8 w-8 rounded-full bg-[#1e1e24]/90 border border-white/10 hover:bg-zinc-700 hover:scale-105 transition-all shadow-xl"
-                                >
-                                    <MoreVertical className="h-4 w-4 text-zinc-400 group-hover:text-zinc-100" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align={isMe ? "end" : "start"} className="bg-[#18181b]/95 border-zinc-800 text-zinc-300 backdrop-blur-xl">
-                                <DropdownMenuItem onClick={() => onReply(message)} className="focus:bg-white/5">
-                                    <Reply className="mr-2 h-4 w-4" /> Reply
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => navigator.clipboard.writeText(message.content)} className="focus:bg-white/5">
-                                    Copy Text
-                                </DropdownMenuItem>
-                                {message.senderId === currentUserId && (
-                                    <DropdownMenuItem className="text-red-400 focus:text-red-400 focus:bg-red-500/10">
-                                        Delete Message
-                                    </DropdownMenuItem>
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
                     </div>
                 </div>
             </div>

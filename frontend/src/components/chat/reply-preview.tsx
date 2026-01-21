@@ -16,20 +16,20 @@ export function ReplyPreview() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="flex items-center justify-between px-4 py-2 bg-zinc-900/50 border-t border-white/5 backdrop-blur-sm"
+                className="flex items-center justify-between px-6 py-3 bg-zinc-900/80 border-t border-white/5 backdrop-blur-2xl relative z-10"
             >
-                <div className="flex flex-col border-l-2 border-indigo-500 pl-3">
-                    <span className="text-xs font-medium text-indigo-400">
-                        Replying to {replyingTo.sender?.name || "Unknown"}
+                <div className="flex flex-col border-l-[3px] border-cyan-400 pl-4">
+                    <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] mb-0.5">
+                        Interpreting Signal from {replyingTo.sender?.name || "Node"}
                     </span>
-                    <span className="text-xs text-zinc-400 truncate max-w-[300px] md:max-w-md">
+                    <span className="text-[13px] text-zinc-400 truncate max-w-[300px] md:max-w-md font-medium">
                         {replyingTo.content}
                     </span>
                 </div>
                 <Button
-                    variant="ghost"
+                    variant="glass"
                     size="icon"
-                    className="h-6 w-6 text-zinc-500 hover:text-white"
+                    className="h-8 w-8 text-zinc-500 hover:text-white rounded-xl bg-white/5 border-white/10"
                     onClick={() => setReplyingTo(null)}
                 >
                     <X className="h-4 w-4" />

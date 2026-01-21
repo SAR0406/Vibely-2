@@ -366,10 +366,13 @@ export function ChatWindow() {
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
+            {/* Background Texture Layer */}
+            <div className="absolute inset-0 z-0 pointer-events-none transition-all duration-700 ease-in-out noise-overlay opacity-20" />
+
             {/* Wallpaper Layer */}
             <div className="absolute inset-0 z-0 pointer-events-none transition-all duration-500 ease-in-out">
                 {wallpaper === 'grid' && <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />}
-                {wallpaper === 'dots' && <div className="absolute inset-0 bg-[radial-gradient(circle_1px_at_1px_1px,rgba(255,255,255,0.1)_1px,transparent_0)] bg-[length:20px_20px]" />}
+                {wallpaper === 'dots' && <div className="absolute inset-0 bg-[radial-gradient(circle_1px_at_1px_1px,rgba(255,255,255,0.1)_1px,transparent_0)] bg-[length:30px_30px]" />}
                 {wallpaper === 'gradient' && <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10" />}
             </div>
 
@@ -379,101 +382,136 @@ export function ChatWindow() {
                 onClose={() => setLightboxOpen(false)}
             />
 
-
             {/* Drag Overlay */}
             <AnimatePresence>
                 {isDragging && (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-50 bg-indigo-500/10 backdrop-blur-sm border-2 border-indigo-500/50 border-dashed m-6 rounded-3xl flex items-center justify-center pointer-events-none"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className="absolute inset-0 z-50 bg-indigo-500/10 backdrop-blur-md border-2 border-indigo-500/30 border-dashed m-10 rounded-[3rem] flex items-center justify-center pointer-events-none"
                     >
-                        <div className="flex flex-col items-center gap-4">
-                            <div className="w-20 h-20 bg-indigo-500/20 rounded-full flex items-center justify-center backdrop-blur-md shadow-2xl">
-                                <Download className="h-8 w-8 text-indigo-300 animate-bounce" />
+                        <div className="flex flex-col items-center gap-6">
+                            <div className="w-24 h-24 bg-indigo-500/20 rounded-full flex items-center justify-center backdrop-blur-xl shadow-2xl border border-indigo-500/20">
+                                <Download className="h-10 w-10 text-indigo-300 animate-bounce" />
                             </div>
-                            <h3 className="text-xl font-bold text-indigo-100">Drop files here</h3>
+                            <div className="text-center">
+                                <h3 className="text-2xl font-black text-white uppercase tracking-widest">Inject Data</h3>
+                                <p className="text-zinc-500 text-sm mt-2 font-medium tracking-tight">Drop files to broadcast to Nexus Node</p>
+                            </div>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Header */}
-            <div className="h-18 border-b border-white/5 flex items-center justify-between px-6 bg-[#050505]/80 backdrop-blur-xl z-20">
-                <div className="flex items-center gap-4">
+            {/* Header - Nexus Control Bar */}
+            <header className="h-20 border-b border-white/5 flex items-center justify-between px-8 bg-[#050505]/40 backdrop-blur-3xl z-20 relative">
+                <div className="flex items-center gap-5">
                     {isMobile && (
                         <Button
-                            variant="ghost"
+                            variant="glass"
                             size="icon"
-                            className="text-zinc-400 -ml-2 hover:bg-white/5"
+                            className="text-zinc-400 -ml-2 hover:bg-white/5 rounded-2xl"
                             onClick={() => selectConversation(null)}
                         >
                             <ChevronLeft className="h-5 w-5" />
                         </Button>
                     )}
-                    <div className="relative cursor-pointer group">
-                        <Avatar className="h-10 w-10 border border-white/10 shadow-lg group-hover:scale-105 transition-transform">
-                            <AvatarImage src={activeChat.avatar} />
-                            <AvatarFallback>{activeChat.name[0]}</AvatarFallback>
-                        </Avatar>
+                    <div className="relative group cursor-pointer" onClick={() => setIsProfileModalOpen && (setIsProfileModalOpen as any)(true)}>
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="relative"
+                        >
+                            <div className="absolute inset-0 bg-indigo-500/20 rounded-[1.2rem] blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <Avatar className="h-12 w-12 border border-white/10 rounded-[1.2rem] shadow-2xl relative z-10 transition-all group-hover:border-white/20">
+                                <AvatarImage src={activeChat.avatar} className="object-cover" />
+                                <AvatarFallback className="bg-zinc-800 text-zinc-500 font-black tracking-tight">{activeChat.name[0]}</AvatarFallback>
+                            </Avatar>
+                        </motion.div>
                         {isOnline && (
-                            <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-[3px] border-[#0a0a0a] rounded-full" />
+                            <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-[3.5px] border-[#050505] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
                         )}
                     </div>
                     <div className="flex flex-col">
-                        <span className="font-semibold text-zinc-100 tracking-tight">{activeChat.name}</span>
-                        <span className={cn("text-[11px] font-medium", isOnline ? "text-emerald-500" : "text-zinc-600")}>
+                        <div className="flex items-center gap-2">
+                            <span className="font-black text-white tracking-tight uppercase text-base">{activeChat.name}</span>
+                            <div className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/5">
+                                <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Node Verified</span>
+                            </div>
+                        </div>
+                        <div className="mt-1">
                             {remoteTyping ? (
-                                <span className="animate-pulse text-indigo-400">typing...</span>
-                            ) : (isOnline ? 'Active Now' : (otherUser?.lastSeen ? `Seen ${formatDistance(otherUser.lastSeen)}` : 'Offline'))}
-                        </span>
-                        <span className={cn("text-[11px] font-medium", isOnline ? "text-emerald-500" : "text-zinc-600")}>
-                            {remoteTyping ? (
-                                <span className="animate-pulse text-indigo-400">typing...</span>
-                            ) : (isOnline ? 'Active Now' : (otherUser?.lastSeen ? `Seen ${formatDistance(otherUser.lastSeen)}` : 'Offline'))}
-                        </span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 animate-pulse">Analyzing Input...</span>
+                            ) : (
+                                <span className={cn("text-[10px] font-black uppercase tracking-[0.2em]", isOnline ? "text-emerald-500/80" : "text-zinc-600")}>
+                                    {isOnline ? 'Nexus Stream Active' : (otherUser?.lastSeen ? `Disconnected ${formatDistance(otherUser.lastSeen)}` : 'Node Offline')}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                {/* Vibe Meter */}
-                <div className="flex items-center gap-4 mr-4">
+                {/* Vibe Meter - Premium Analyzer Style */}
+                <div className="flex items-center gap-8">
                     {activeChat.vibe && (
-                        <div className="hidden md:flex flex-col items-end">
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
-                                    {activeChat.vibe.label}
-                                </span>
-                                <span className="text-xs text-zinc-500 font-mono">
-                                    {activeChat.vibe.score}%
-                                </span>
+                        <div className="hidden lg:flex flex-col items-end gap-2">
+                            <div className="flex items-center gap-3">
+                                <div className="flex flex-col items-end">
+                                    <span className="text-[9px] font-black text-zinc-600 tracking-widest uppercase mb-0.5">Atmosphere Analyser</span>
+                                    <span className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 uppercase tracking-tighter">
+                                        {activeChat.vibe.label}
+                                    </span>
+                                </div>
+                                <div className="h-10 w-[1px] bg-white/5" />
+                                <div className="flex flex-col items-start min-w-[3rem]">
+                                    <span className="text-[9px] font-black text-zinc-600 tracking-widest uppercase mb-0.5">Vector</span>
+                                    <span className="text-xs font-mono font-black text-zinc-400">
+                                        {activeChat.vibe.score}.00
+                                    </span>
+                                </div>
                             </div>
-                            <div className="w-24 h-1 bg-white/10 rounded-full overflow-hidden mt-1">
+                            <div className="w-40 h-1 bg-white/5 rounded-full overflow-hidden shadow-inner border border-white/5">
                                 <motion.div
-                                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                                    className="h-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 shadow-[0_0_8px_rgba(99,102,241,0.5)]"
                                     initial={{ width: 0 }}
                                     animate={{ width: `${activeChat.vibe.score}%` }}
-                                    transition={{ duration: 1, type: "spring" }}
+                                    transition={{ duration: 1.5, type: "spring", bounce: 0 }}
                                 />
                             </div>
                         </div>
                     )}
 
-                    <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/5 disabled:opacity-30" onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, false)} disabled={!isOnline}>
-                            <Phone className="h-4 w-4" />
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="glass"
+                            size="icon"
+                            className="h-10 w-10 text-white hover:bg-white/10 rounded-2xl border-white/10 transition-all active:scale-90"
+                            onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, false)}
+                            disabled={!isOnline}
+                        >
+                            <Phone className="h-4.5 w-4.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/5 disabled:opacity-30" onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, true)} disabled={!isOnline}>
-                            <Video className="h-4 w-4" />
+                        <Button
+                            variant="glass"
+                            size="icon"
+                            className="h-10 w-10 text-white hover:bg-indigo-500/20 hover:text-indigo-300 rounded-2xl border-white/10 transition-all active:scale-90"
+                            onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, true)}
+                            disabled={!isOnline}
+                        >
+                            <Video className="h-4.5 w-4.5" />
+                        </Button>
+                        <div className="w-[1px] h-8 bg-white/5 mx-2" />
+                        <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-500 hover:text-white rounded-2xl">
+                            <MoreVertical className="h-5 w-5" />
                         </Button>
                     </div>
                 </div>
+            </header>
 
-            </div>
-
-            {/* Messages */}
-            <ScrollArea className="flex-1 px-4 py-8" ref={scrollRef}>
-                <div className="max-w-4xl mx-auto w-full flex flex-col gap-1.5">
+            {/* Messages Area */}
+            <ScrollArea className="flex-1" ref={scrollRef}>
+                <div className="max-w-4xl mx-auto w-full flex flex-col gap-2 px-8 py-12">
                     <AnimatePresence initial={false} mode="popLayout">
                         {activeMessages.map((msg, index) => {
                             const isMe = msg.senderId === currentUser?.id;
@@ -510,141 +548,140 @@ export function ChatWindow() {
 
                     {remoteTyping && (
                         <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-zinc-900/40 border border-white/5 w-fit px-4 py-3 rounded-2xl rounded-tl-none ml-10 mt-2 flex gap-1 items-center"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="bg-white/[0.03] border border-white/10 w-fit px-5 py-4 rounded-[2rem] rounded-tl-none ml-14 mt-2 flex gap-1.5 items-center shadow-2xl backdrop-blur-xl"
                         >
-                            <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce [animation-delay:-0.32s]" />
-                            <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce [animation-delay:-0.16s]" />
-                            <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" />
+                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce [animation-delay:-0.32s] shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                            <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.16s] shadow-[0_0_8px_rgba(129,140,248,0.8)]" />
+                            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce shadow-[0_0_8px_rgba(167,139,250,0.8)]" />
                         </motion.div>
                     )}
-                    <div ref={scrollRef} className="h-4" />
                 </div>
             </ScrollArea>
 
-            {/* Input Area */}
-            <div className="p-4 pt-2 bg-gradient-to-t from-black via-black/90 to-transparent z-20">
+            {/* Input Area - Nexus Floating Command Node */}
+            <div className="px-8 pb-8 pt-2 bg-gradient-to-t from-black via-black/80 to-transparent z-20">
+                <div className="max-w-4xl mx-auto flex flex-col">
 
-                {/* Smart Replies */}
-                <SmartReplies
-                    lastMessageContent={activeMessages[activeMessages.length - 1]?.senderId !== currentUser?.id ? activeMessages[activeMessages.length - 1]?.content : undefined}
-                    onSelect={(reply) => {
-                        setInputValue(reply)
-                        // Optional: Auto-send or focus input?
-                        // Let's focus input so they can edit if they want, or just hit send
-                        // Or just auto-send for "speed"? Let's set value for now.
-                    }}
-                />
-
-                {/* Reply Context */}
-                <ReplyPreview />
-
-                <div className="relative max-w-4xl mx-auto bg-zinc-900/60 backdrop-blur-xl border border-white/10 rounded-[1.5rem] shadow-2xl p-2 transition-colors focus-within:border-white/20 focus-within:bg-zinc-900/80">
-                    {showEmojiPicker && (
-                        <div className="absolute bottom-full right-0 mb-4 z-50 shadow-2xl rounded-2xl overflow-hidden border border-white/10">
-                            <EmojiPicker
-                                theme={Theme.DARK}
-                                emojiStyle={EmojiStyle.APPLE}
-                                onEmojiClick={handleEmojiClick}
-                                searchDisabled
-                                skinTonesDisabled
-                                width={320}
-                                height={380}
-                            />
-                        </div>
-                    )}
-
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileSelect}
-                        className="hidden"
-                        accept="image/*,application/pdf,.doc,.docx"
+                    <SmartReplies
+                        lastMessageContent={activeMessages[activeMessages.length - 1]?.senderId !== currentUser?.id ? activeMessages[activeMessages.length - 1]?.content : undefined}
+                        onSelect={(reply) => setInputValue(reply)}
                     />
 
-                    <form onSubmit={handleSend} className="flex items-end gap-2">
-                        {isRecording ? (
-                            <AudioRecorder
-                                onSend={(file) => {
-                                    processFile(file)
-                                    setIsRecording(false)
-                                }}
-                                onCancel={() => setIsRecording(false)}
-                            />
-                        ) : (
-                            <>
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="h-10 w-10 text-zinc-400 hover:text-indigo-300 hover:bg-indigo-500/10 rounded-full shrink-0"
-                                >
-                                    <Paperclip className="h-5 w-5" />
-                                </Button>
+                    <ReplyPreview />
 
-                                <textarea
-                                    value={inputValue}
-                                    onChange={(e) => {
-                                        setInputValue(e.target.value)
-                                        handleTyping()
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' && !e.shiftKey) {
-                                            e.preventDefault()
-                                            handleSend(e)
-                                        }
-                                    }}
-                                    placeholder="Type a message..."
-                                    className="flex-1 bg-transparent border-0 focus:ring-0 resize-none min-h-[44px] max-h-[120px] py-3 text-[15px] text-zinc-100 placeholder:text-zinc-600 scrollbar-hide font-normal"
-                                    rows={1}
+                    <div className="relative glass-card border-white/10 rounded-[2.5rem] p-3 transition-all duration-500 focus-within:border-indigo-500/40 focus-within:bg-black/60 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group">
+
+                        {/* Status Light */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-px w-12 h-1 bg-indigo-500/40 rounded-b-full blur-sm group-focus-within:bg-cyan-400 transition-colors" />
+
+                        {showEmojiPicker && (
+                            <div className="absolute bottom-full right-0 mb-6 z-50 shadow-[0_0_100px_rgba(0,0,0,0.8)] rounded-[2.5rem] overflow-hidden border border-white/10 bg-[#0a0a0a] backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-5 duration-300">
+                                <EmojiPicker
+                                    theme={Theme.DARK}
+                                    emojiStyle={EmojiStyle.APPLE}
+                                    onEmojiClick={handleEmojiClick}
+                                    searchDisabled
+                                    skinTonesDisabled
+                                    width={340}
+                                    height={400}
                                 />
+                            </div>
+                        )}
 
-                                <div className="flex items-center gap-1 shrink-0 pb-0.5">
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileSelect}
+                            className="hidden"
+                            accept="image/*,application/pdf,.doc,.docx"
+                        />
+
+                        <form onSubmit={handleSend} className="flex items-end gap-3 px-2">
+                            {isRecording ? (
+                                <AudioRecorder
+                                    onSend={(file) => {
+                                        processFile(file)
+                                        setIsRecording(false)
+                                    }}
+                                    onCancel={() => setIsRecording(false)}
+                                />
+                            ) : (
+                                <>
                                     <Button
                                         type="button"
-                                        variant="ghost"
+                                        variant="glass"
                                         size="icon"
-                                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                                        className={cn(
-                                            "h-10 w-10 rounded-full transition-colors",
-                                            showEmojiPicker ? "text-indigo-400 bg-indigo-500/10" : "text-zinc-400 hover:text-zinc-100"
-                                        )}
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="h-12 w-12 text-zinc-500 hover:text-cyan-400 hover:bg-white/5 rounded-3xl shrink-0 transition-all active:scale-90"
                                     >
-                                        <Smile className="h-5 w-5" />
+                                        <Paperclip className="h-5.5 w-5.5" />
                                     </Button>
 
-                                    {inputValue.trim() ? (
-                                        <Button
-                                            type="submit"
-                                            disabled={!inputValue.trim()}
-                                            size="icon"
-                                            variant="primary"
-                                            className="h-10 w-10 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/25"
-                                        >
-                                            <Send className="h-4 w-4 ml-0.5" />
-                                        </Button>
-                                    ) : (
+                                    <textarea
+                                        value={inputValue}
+                                        onChange={(e) => {
+                                            setInputValue(e.target.value)
+                                            handleTyping()
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                e.preventDefault()
+                                                handleSend(e)
+                                            }
+                                        }}
+                                        placeholder="Transmit signal to Nexus..."
+                                        className="flex-1 bg-transparent border-0 focus:ring-0 resize-none min-h-[52px] max-h-[200px] py-4 text-[15px] font-medium text-white placeholder:text-zinc-700 scrollbar-hide"
+                                        rows={1}
+                                    />
+
+                                    <div className="flex items-center gap-2 shrink-0 pb-1.5">
                                         <Button
                                             type="button"
-                                            size="icon"
                                             variant="ghost"
-                                            onClick={() => setIsRecording(true)}
-                                            className="h-10 w-10 rounded-full text-zinc-400 hover:text-red-400 hover:bg-red-500/10"
+                                            size="icon"
+                                            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                            className={cn(
+                                                "h-12 w-12 rounded-3xl transition-all active:scale-90",
+                                                showEmojiPicker ? "text-cyan-400 bg-cyan-400/10" : "text-zinc-500 hover:text-white"
+                                            )}
                                         >
-                                            <Mic className="h-5 w-5" />
+                                            <Smile className="h-6 w-6" />
                                         </Button>
-                                    )}
-                                </div>
-                            </>
-                        )}
-                    </form>
-                </div>
-                <div className="text-center mt-2 pb-1">
-                    <p className="text-[10px] text-zinc-700">Press Enter to send, Shift + Enter for new line</p>
+
+                                        {inputValue.trim() ? (
+                                            <Button
+                                                type="submit"
+                                                size="icon"
+                                                className="h-12 w-12 rounded-[1.4rem] bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-600/20 active:scale-90 transition-all"
+                                            >
+                                                <Send className="h-5 w-5 ml-0.5" />
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type="button"
+                                                size="icon"
+                                                variant="ghost"
+                                                onClick={() => setIsRecording(true)}
+                                                className="h-12 w-12 rounded-3xl text-zinc-500 hover:text-red-400 hover:bg-red-500/10 active:scale-90 transition-all"
+                                            >
+                                                <Mic className="h-6 w-6" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                </>
+                            )}
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+    )
+        < div className = "text-center mt-2 pb-1" >
+            <p className="text-[10px] text-zinc-700">Press Enter to send, Shift + Enter for new line</p>
+                </div >
+            </div >
+        </div >
     )
 }

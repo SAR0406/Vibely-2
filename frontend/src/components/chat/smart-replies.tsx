@@ -45,23 +45,25 @@ export function SmartReplies({ lastMessageContent, onSelect }: SmartRepliesProps
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="flex items-center gap-2 px-4 pb-2 overflow-x-auto scrollbar-hide"
+                className="flex items-center gap-3 px-6 pb-4 overflow-x-auto scrollbar-hide relative z-10"
             >
-                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 shrink-0">
-                    <Sparkles className="w-3 h-3 text-white" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 shrink-0 shadow-lg shadow-indigo-500/20">
+                    <Sparkles className="w-4 h-4 text-white" />
                 </div>
-                {suggestions.map((reply, i) => (
-                    <motion.button
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.05 }}
-                        onClick={() => onSelect(reply)}
-                        className="px-3 py-1.5 rounded-full bg-zinc-800/50 hover:bg-zinc-700/50 border border-white/5 text-xs text-zinc-300 hover:text-white transition-all whitespace-nowrap"
-                    >
-                        {reply}
-                    </motion.button>
-                ))}
+                <div className="flex gap-2.5">
+                    {suggestions.map((reply, i) => (
+                        <motion.button
+                            key={i}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.05, type: "spring" }}
+                            onClick={() => onSelect(reply)}
+                            className="px-4 py-2 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/10 text-[11px] font-bold text-zinc-400 hover:text-white transition-all whitespace-nowrap shadow-xl active:scale-95"
+                        >
+                            {reply}
+                        </motion.button>
+                    ))}
+                </div>
             </motion.div>
         </AnimatePresence>
     )
