@@ -4,7 +4,7 @@ import * as React from "react"
 import {
     Send, Phone, Video, Info, Paperclip, Check, CheckCheck, Smile,
     Search, Download, FileText, X, Reply, Mic, ChevronLeft,
-    Image as ImageIcon, MoreVertical, Sparkles
+    Image as ImageIcon, MoreVertical, Sparkles, Flag
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/design-system/button"
