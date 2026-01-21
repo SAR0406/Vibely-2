@@ -19,6 +19,11 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/design-system/button"
 import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/design-system/avatar"
+import {
   Moon,
   Sun,
   Monitor,
