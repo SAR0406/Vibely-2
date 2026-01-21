@@ -309,7 +309,9 @@
 
   .magic-border::before {
     content: "";
-    @apply absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%, #8b5cf6_0%, #06b6d4_50%, #8b5cf6_100%)] animate-[spin_4s_linear_infinite] opacity-0 group-hover:opacity-40 transition-opacity duration-500;
+    @apply absolute inset-[-1000%] opacity-0 group-hover:opacity-40 transition-opacity duration-500;
+    background-image: conic-gradient(from 90deg at 50% 50%, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%);
+    animation: spin 4s linear infinite;
   }
 
   .magic-border-content {
