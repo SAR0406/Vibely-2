@@ -322,36 +322,50 @@ export function ChatWindow() {
 
     if (!activeChat) {
         return (
-            <div className="h-full w-full flex items-center justify-center flex-col gap-6 bg-[#050505] relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(99,102,241,0.15),transparent_40%)]" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+            <div className="h-full w-full flex items-center justify-center flex-col gap-8 bg-[#050505] relative overflow-hidden">
+                {/* Harmonic Background Layers */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(99,102,241,0.15),transparent_50%)]" />
+                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                <div className="absolute inset-0 noise-overlay opacity-[0.03] pointer-events-none" />
 
                 <motion.div
-                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                    initial={{ scale: 0.9, opacity: 0, y: 30 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, type: "spring" }}
-                    className="relative z-10 flex flex-col items-center"
+                    transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
+                    className="relative z-10 flex flex-col items-center text-center px-6"
                 >
-                    <div className="w-24 h-24 bg-gradient-to-tr from-indigo-500 to-violet-600 rounded-[2rem] flex items-center justify-center mb-8 shadow-[0_0_60px_-10px_rgba(99,102,241,0.5)] border border-white/20 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20" />
-                        <span className="text-4xl select-none relative z-10">✨</span>
+                    <div className="relative mb-10">
+                        <div className="absolute inset-0 bg-indigo-500/30 blur-3xl rounded-full opacity-50 animate-pulse" />
+                        <div className="w-32 h-32 bg-gradient-to-tr from-cyan-400 via-indigo-600 to-purple-700 rounded-[2.5rem] flex items-center justify-center shadow-[0_0_80px_-20px_rgba(34,211,238,0.4)] border border-white/20 relative overflow-hidden group hover:scale-105 transition-transform duration-500">
+                            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                            <Sparkles className="w-12 h-12 text-white relative z-10 brightness-110" />
+                        </div>
                     </div>
 
-                    <h3 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 mb-3 tracking-tighter">Vibely</h3>
-                    <p className="text-zinc-500 text-center max-w-sm mb-10 leading-relaxed text-sm">
-                        Your workspace for real-time collaboration.<br />Select a chat to begin.
+                    <h3 className="text-5xl font-black text-white mb-4 tracking-tighter uppercase">
+                        Establishing <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">Connection</span>
+                    </h3>
+                    <p className="text-zinc-500 text-center max-w-sm mb-12 font-medium tracking-tight text-base leading-relaxed">
+                        Nexus Core is standing by. Synchronize with a Node to begin data transmission and collaborative processing.
                     </p>
 
                     <Button
                         variant="glass"
                         size="lg"
-                        className="rounded-full px-8 bg-white/5 hover:bg-white/10 border-white/10 backdrop-blur-md"
+                        className="h-14 rounded-2xl px-10 bg-white/5 hover:bg-white/10 border-white/10 backdrop-blur-2xl group transition-all"
                         onClick={() => window.location.href = '/search'}
                     >
-                        <Search className="w-4 h-4 mr-2" />
-                        Start a Conversation
+                        <Search className="w-5 h-5 mr-3 text-cyan-400 group-hover:scale-110 transition-transform" />
+                        <span className="font-black uppercase tracking-[0.2em] text-xs">Scan for Nodes</span>
                     </Button>
                 </motion.div>
+
+                {/* Bottom Status Indicator */}
+                <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                    <span className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em]">Nexus Operational // Region Alpha</span>
+                </div>
             </div>
         )
     }
@@ -677,11 +691,5 @@ export function ChatWindow() {
                 </div>
             </div>
         </div>
-    )
-        < div className = "text-center mt-2 pb-1" >
-            <p className="text-[10px] text-zinc-700">Press Enter to send, Shift + Enter for new line</p>
-                </div >
-            </div >
-        </div >
     )
 }
