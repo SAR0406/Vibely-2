@@ -25,7 +25,7 @@ import { formatMessageTime, formatDistance, isSameDay, formatMessageDate } from 
 import { useCall } from "@/providers/call-provider"
 import { EmojiStyle, Theme, EmojiClickData } from 'emoji-picker-react'
 import dynamic from 'next/dynamic'
-import { MessageBubble } from "./message-bubble"
+import { VibeMessageBubble } from "./vibe-message-bubble"
 import { DateSeparator } from "./date-separator"
 import { AudioRecorder } from "./audio-recorder"
 import { ReplyPreview } from "./reply-preview"
@@ -548,7 +548,7 @@ export function ChatWindow() {
                             return (
                                 <React.Fragment key={msg.id}>
                                     {showDateHeader && <DateSeparator date={dateLabel} />}
-                                    <MessageBubble
+                                    <VibeMessageBubble
                                         message={msg}
                                         isMe={isMe}
                                         isFirstInGroup={isFirstInGroup}
