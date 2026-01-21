@@ -129,18 +129,18 @@ export function MessageBubble({
                             "relative px-5 py-3.5 text-[15px] leading-relaxed shadow-2xl transition-all duration-300 overflow-hidden",
                             isMe
                                 ? cn(
-                                    "rounded-[2rem] rounded-tr-sm",
-                                    !isFirstInGroup && "rounded-tr-[2rem]",
-                                    !isLastInGroup && "rounded-br-sm",
+                                    "rounded-[1.75rem]",
+                                    isFirstInGroup ? "rounded-tr-md" : "rounded-tr-[1.75rem]",
+                                    !isLastInGroup && "rounded-br-md",
                                 )
                                 : cn(
-                                    "rounded-[2rem] rounded-tl-sm",
-                                    !isFirstInGroup && "rounded-tl-[2rem]",
-                                    !isLastInGroup && "rounded-bl-sm",
+                                    "rounded-[1.75rem]",
+                                    isFirstInGroup ? "rounded-tl-md" : "rounded-tl-[1.75rem]",
+                                    !isLastInGroup && "rounded-bl-md",
                                 ),
                             isMe
-                                ? "bg-gradient-to-br from-indigo-600 via-indigo-600 to-indigo-700 text-white border border-white/10 shadow-indigo-500/20"
-                                : "glass-card text-zinc-200 shadow-black/40"
+                                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/10"
+                                : "bg-[#1a1a1a] text-zinc-200 border border-white/5"
                         )}
                     >
                         {/* Shimmer effect for me messages */}
@@ -202,25 +202,18 @@ export function MessageBubble({
 
                         {/* Timestamp & Status */}
                         <div className={cn(
-                            "flex items-center justify-between gap-4 mt-2 select-none",
-                            isMe ? "text-indigo-100/60" : "text-zinc-600"
+                            "flex items-center justify-end gap-1.5 mt-1 select-none",
+                            isMe ? "text-white/50" : "text-zinc-500"
                         )}>
-                            <div className="flex items-center gap-2">
-                                <span className="blockchain-hash">
-                                    {NexusSecurity.generateHash(message.content || '', message.senderId || 'anon', new Date(message.timestamp).getTime())}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-[9px] font-mono font-bold tracking-widest uppercase">{formatMessageTime(message.timestamp)}</span>
-                                {isMe && (
-                                    <div className={cn("flex transition-colors", message.status === 'seen' ? "text-emerald-400" : "opacity-40")}>
-                                        {message.status === 'seen'
-                                            ? <CheckCheck className="w-3.5 h-3.5 drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]" />
-                                            : <Check className="w-3.5 h-3.5" />
-                                        }
-                                    </div>
-                                )}
-                            </div>
+                            <span className="text-[10px] font-medium tracking-tight whitespace-nowrap">{formatMessageTime(message.timestamp)}</span>
+                            {isMe && (
+                                <div className={cn("flex transition-colors", message.status === 'seen' ? "text-cyan-400" : "opacity-40")}>
+                                    {message.status === 'seen'
+                                        ? <CheckCheck className="w-3 h-3" />
+                                        : <Check className="w-3 h-3" />
+                                    }
+                                </div>
+                            )}
                         </div>
 
                         {/* Reactions Display */}

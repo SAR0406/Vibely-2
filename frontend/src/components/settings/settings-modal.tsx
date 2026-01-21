@@ -100,8 +100,6 @@ export function SettingsModal({
     userTier,
   } = useThemeStore()
 
-  // Map dialog's `onOpenChange` into both callbacks: call onOpenChange if present,
-  // and call onClose() as a convenience when modal closes (val === false).
   const handleOpenChange = React.useCallback(
     (val: boolean) => {
       onOpenChange?.(val)
@@ -112,98 +110,106 @@ export function SettingsModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-[#121216] border border-white/10 p-0 overflow-hidden">
-        <DialogHeader className="p-6 border-b border-white/5 bg-white/5">
-          <div className="flex items-center justify-between gap-4">
-            <DialogTitle className="text-xl font-bold text-white">
-              Application Settings
-            </DialogTitle>
+      <DialogContent className="sm:max-w-2xl bg-[#050505]/95 backdrop-blur-3xl border border-white/5 p-0 overflow-hidden shadow-2xl shadow-indigo-500/10">
+        <div className="absolute inset-0 noise-texture opacity-40 pointer-events-none" />
 
-            {/* Optional current user preview (small, non-critical UI) */}
+        <DialogHeader className="p-10 border-b border-white/5 relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_var(--color-indigo-500)]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500">Node Configuration</span>
+              </div>
+              <DialogTitle className="text-4xl font-black text-white uppercase tracking-tighter italic">
+                Interface <span className="text-indigo-500">Elite</span>
+              </DialogTitle>
+            </div>
+
             {currentUser && (
-              <div className="flex items-center gap-3">
-                {currentUser.image ? (
-                  // small avatar
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={currentUser.image}
-                    alt={currentUser.name ?? "User avatar"}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs text-zinc-300">
-                    {currentUser.name?.charAt(0).toUpperCase() ?? "U"}
+              <div className="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5">
+                <Avatar size="md">
+                  <AvatarImage src={currentUser.image || undefined} />
+                  <AvatarFallback className="bg-zinc-900">{currentUser.name?.[0]}</AvatarFallback>
+                </Avatar>
+                <div className="text-left">
+                  <div className="text-sm font-black text-white italic">
+                    {currentUser.name || "UNIDENTIFIED"}
                   </div>
-                )}
-                <div className="text-right">
-                  <div className="text-xs text-zinc-300 leading-4">
-                    {currentUser.name ?? currentUser.email ?? "User"}
-                  </div>
+                  <p className="blockchain-hash">SIG: 0406_AX</p>
                 </div>
               </div>
             )}
           </div>
         </DialogHeader>
 
-        <Tabs defaultValue="appearance">
-          <TabsList className="grid w-full grid-cols-2 bg-white/5 border-b border-white/5">
-            <TabsTrigger value="appearance">Appearance</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="system">System</TabsTrigger>
+        <Tabs defaultValue="appearance" className="relative z-10">
+          <TabsList className="flex w-full bg-[#050505] border-b border-white/5 rounded-none h-16 px-6 gap-8">
+            <TabsTrigger value="appearance" className="data-[state=active]:bg-transparent data-[state=active]:text-indigo-400 text-zinc-600 font-black uppercase tracking-widest text-[10px] h-full rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500 transition-all">Appearance</TabsTrigger>
+            <TabsTrigger value="notifications" className="data-[state=active]:bg-transparent data-[state=active]:text-indigo-400 text-zinc-600 font-black uppercase tracking-widest text-[10px] h-full rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500 transition-all">Telemetry</TabsTrigger>
+            <TabsTrigger value="system" className="data-[state=active]:bg-transparent data-[state=active]:text-indigo-400 text-zinc-600 font-black uppercase tracking-widest text-[10px] h-full rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500 transition-all">Core Engine</TabsTrigger>
           </TabsList>
 
-          <div className="p-6 space-y-6">
-            <TabsContent value="appearance">
+          <div className="p-10 space-y-12">
+            <TabsContent value="appearance" className="space-y-10 mt-0">
               {/* Theme mode */}
-              <section className="space-y-3">
-                <Label className="text-base text-zinc-400">Theme Mode</Label>
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-4 bg-indigo-500 rounded-full" />
+                  <Label className="text-xs font-black uppercase tracking-widest text-zinc-400">Environment Mode</Label>
+                </div>
 
-                {/* Only render theme-sensitive UI after mount to avoid mismatch */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-4">
                   {(["light", "dark", "system"] as const).map((mode) => {
                     const active = isMounted && theme === mode
                     return (
-                      <Button
+                      <button
                         key={mode}
-                        variant="outline"
                         onClick={() => setTheme(mode)}
                         className={cn(
-                          "flex flex-col items-center justify-center h-20 gap-2 border-white/10 bg-white/5 hover:bg-white/10 hover:text-white capitalize transition",
-                          active &&
-                          "border-indigo-500 bg-indigo-500/10 text-indigo-400"
+                          "relative group flex flex-col items-center justify-center h-28 gap-3 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all overflow-hidden",
+                          active && "border-indigo-500/50 bg-indigo-500/10"
                         )}
                         aria-pressed={active}
-                        aria-label={`Set theme to ${mode}`}
                       >
-                        {mode === "light" && <Sun className="w-6 h-6" />}
-                        {mode === "dark" && <Moon className="w-6 h-6" />}
-                        {mode === "system" && <Monitor className="w-6 h-6" />}
-                        <span className="text-xs font-medium">{mode}</span>
-                      </Button>
+                        {active && <div className="absolute inset-0 bg-indigo-500/5 blur-xl" />}
+                        <div className={cn(
+                          "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 relative z-10",
+                          active ? "bg-indigo-500 text-black" : "bg-white/5 text-zinc-600 group-hover:text-white"
+                        )}>
+                          {mode === "light" && <Sun className="w-6 h-6" />}
+                          {mode === "dark" && <Moon className="w-6 h-6" />}
+                          {mode === "system" && <Monitor className="w-6 h-6" />}
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] relative z-10 transition-colors group-hover:text-white">{mode}</span>
+                      </button>
                     )
                   })}
                 </div>
               </section>
 
               {/* Accent colors */}
-              <section className="space-y-3">
-                <Label className="text-base text-zinc-400">Accent Color</Label>
-                <div className="flex flex-wrap gap-3">
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-4 bg-indigo-500 rounded-full" />
+                  <Label className="text-xs font-black uppercase tracking-widest text-zinc-400">Accent Telemetry</Label>
+                </div>
+                <div className="flex flex-wrap gap-4">
                   {ACCENT_COLORS.map(({ value, class: bgClass }) => (
                     <button
                       key={value}
                       onClick={() => setAccentColor(value)}
                       className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 ring-2 ring-offset-2 ring-offset-[#121216]",
+                        "w-12 h-12 rounded-2xl flex items-center justify-center transition-all hover:scale-110 relative group",
                         bgClass,
                         accentColor === value
-                          ? "ring-white"
-                          : "ring-transparent opacity-80"
+                          ? "ring-4 ring-white shadow-2xl"
+                          : "ring-0 opacity-60 hover:opacity-100"
                       )}
-                      aria-label={`Set accent color to ${value}`}
                     >
                       {accentColor === value && (
-                        <Check className="w-5 h-5 text-white" />
+                        <div className="absolute inset-x-0 -bottom-8 flex justify-center">
+                          <div className="w-1 h-1 rounded-full bg-white" />
+                        </div>
                       )}
                     </button>
                   ))}
@@ -211,9 +217,12 @@ export function SettingsModal({
               </section>
 
               {/* Wallpapers */}
-              <section className="space-y-3">
-                <Label className="text-base text-zinc-400">Chat Wallpaper</Label>
-                <div className="grid grid-cols-2 gap-3">
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-1 h-4 bg-indigo-500 rounded-full" />
+                  <Label className="text-xs font-black uppercase tracking-widest text-zinc-400">Nexus Atmosphere</Label>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   {WALLPAPERS.map((wp) => (
                     <WallpaperOption
                       key={wp.value}
@@ -222,8 +231,8 @@ export function SettingsModal({
                       selected={wallpaper === wp.value}
                       onSelect={() => {
                         if ((wp as any).isPro && userTier === 'FREE') {
-                          alert('Upgrade to PRO to unlock this vibe!');
-                          return;
+                          alert('Ascend to ELITE to unlock this node vibe.');
+                          return
                         }
                         setWallpaper(wp.value)
                       }}
@@ -233,41 +242,54 @@ export function SettingsModal({
               </section>
             </TabsContent>
 
-            <TabsContent value="notifications">
+            <TabsContent value="notifications" className="space-y-6 mt-0">
               <NotificationSoundRow
                 soundEnabled={soundEnabled}
                 toggleSound={toggleSound}
               />
-
-              <DesktopNotificationsPlaceholder />
+              <div className="p-8 rounded-[2.5rem] bg-indigo-500/5 border border-indigo-500/10 space-y-4 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity">
+                  <Zap className="w-32 h-32" />
+                </div>
+                <h4 className="text-sm font-black text-indigo-400 uppercase tracking-widest">Premium Alerts</h4>
+                <p className="text-xs text-zinc-500 leading-relaxed max-w-[80%]">
+                  Unlocked elite notification patterns. Every sound is synthesized for the highest neural resonance.
+                </p>
+                <Button variant="outline" size="sm" className="border-indigo-500/20 text-indigo-400">
+                  Sync Devices
+                </Button>
+              </div>
             </TabsContent>
 
-            <TabsContent value="system" className="space-y-4">
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-emerald-400" />
+            <TabsContent value="system" className="space-y-8 mt-0">
+              <div className="p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-6 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none" />
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 group-hover:rotate-12 transition-transform shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                  <Activity className="w-6 h-6 text-emerald-400" />
                 </div>
-                <div>
-                  <h3 className="text-sm font-bold text-emerald-400">All Systems Operational</h3>
-                  <p className="text-xs text-emerald-500/60">Uptime: 99.99% • Latency: 24ms</p>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-black text-emerald-400 uppercase tracking-tighter italic">Engine Operational</h3>
+                  <div className="flex gap-4">
+                    <p className="blockchain-hash">UP: 99.9%</p>
+                    <p className="blockchain-hash">LAT: 0.002ms</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <SystemCard icon={Server} label="Backend" status="Active" color="text-indigo-400" />
-                <SystemCard icon={Database} label="Database" status="Healthy" color="text-blue-400" />
-                <SystemCard icon={ShieldCheck} label="Encryption" status="AES-256" color="text-purple-400" />
-                <SystemCard icon={Activity} label="Redis Cache" status="Connected" color="text-orange-400" />
+              <div className="grid grid-cols-2 gap-4">
+                <SystemCard icon={Server} label="Matrix Core" status="v4.2-Alpha" color="text-indigo-400" />
+                <SystemCard icon={Database} label="Distributed Ledger" status="Synced" color="text-cyan-400" />
+                <SystemCard icon={ShieldCheck} label="Quantum Lock" status="RSA-8192" color="text-rose-400" />
+                <SystemCard icon={Activity} label="Neural Cache" status="Heat: 24°C" color="text-amber-400" />
               </div>
 
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-400">API Version</span>
-                  <span className="text-zinc-200 font-mono">v1.2.4-stable</span>
+              <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 space-y-3">
+                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                  <span className="text-zinc-500">Node Identity</span>
+                  <span className="text-indigo-400">Verified Signature</span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-400">Client Build</span>
-                  <span className="text-zinc-200 font-mono">2026.01.15</span>
+                <div className="blockchain-hash break-all bg-black/40 p-4 rounded-xl border border-white/5 opacity-60">
+                  NEXUS-0x89274-VIBELY-CORE-ALPHA-9-SIG-ENABLED
                 </div>
               </div>
             </TabsContent>
@@ -278,7 +300,6 @@ export function SettingsModal({
   )
 }
 
-/** Wallpaper tile component */
 function WallpaperOption({
   wp,
   selected,
@@ -297,36 +318,36 @@ function WallpaperOption({
       type="button"
       onClick={onSelect}
       className={cn(
-        "relative cursor-pointer rounded-xl overflow-hidden aspect-video border-2 transition-all text-left",
-        selected ? "border-indigo-500 shadow-lg" : "border-white/10 hover:border-white/20",
-        isLocked && "opacity-70"
+        "relative cursor-pointer rounded-3xl overflow-hidden aspect-video border-2 transition-all duration-700 group",
+        selected ? "border-indigo-500 scale-[1.02] shadow-[0_0_30px_rgba(99,102,241,0.2)]" : "border-white/5 hover:border-white/10 opacity-70 hover:opacity-100",
+        isLocked && "opacity-60 grayscale-[0.5]"
       )}
-      aria-pressed={selected}
-      aria-label={`Select wallpaper ${wp.label}`}
     >
       {isLocked && (
-        <div className="absolute inset-0 z-10 bg-black/40 flex items-center justify-center">
-          <Zap className="w-6 h-6 text-yellow-400 fill-yellow-400" />
+        <div className="absolute inset-0 z-20 bg-black/60 flex items-center justify-center group-hover:bg-black/40 transition-colors">
+          <Zap className="w-8 h-8 text-indigo-400 animate-pulse" />
         </div>
       )}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 opacity-40" />
+
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-40 transition-opacity" />
 
       {wp.value === "grid" && (
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-30" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 scale-150 group-hover:scale-100 transition-transform duration-1000" />
       )}
       {wp.value === "dots" && (
-        <div className="absolute inset-0 bg-[radial-gradient(circle_1px_at_0_0,rgba(255,255,255,0.1)_1px,transparent_0)] bg-[length:20px_20px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_1px_at_0_0,rgba(255,255,255,0.1)_1px,transparent_0)] bg-[length:15px_15px]" />
       )}
 
-      <div className="absolute bottom-2 left-2 right-2 px-3 py-1.5 rounded-lg bg-black/60 text-xs text-zinc-200 flex items-center justify-between">
-        <span>{wp.label}</span>
-        {selected && <Check className="w-3 h-3 text-indigo-400" />}
+      <div className="absolute bottom-3 left-3 right-3 px-4 py-3 rounded-2xl bg-[#050505]/80 backdrop-blur-md border border-white/5 flex items-center justify-between z-10">
+        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-100">{wp.label}</span>
+        {selected && (
+          <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_var(--color-indigo-500)]" />
+        )}
       </div>
     </button>
   )
 }
 
-/** Sound row */
 function NotificationSoundRow({
   soundEnabled,
   toggleSound,
@@ -335,47 +356,38 @@ function NotificationSoundRow({
   toggleSound: () => void
 }) {
   return (
-    <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
-      <div className="flex items-center gap-3">
-        {soundEnabled ? (
-          <Volume2 className="w-5 h-5 text-emerald-400" />
-        ) : (
-          <VolumeX className="w-5 h-5 text-zinc-500" />
-        )}
-        <div>
-          <Label className="text-base font-medium text-zinc-100">Sound Effects</Label>
-          <p className="text-sm text-zinc-500">Sounds for messages and UI interactions</p>
+    <div className="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
+      <div className="flex items-center gap-6">
+        <div className={cn(
+          "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500",
+          soundEnabled ? "bg-indigo-500 text-black shadow-2xl" : "bg-white/5 text-zinc-600"
+        )}>
+          {soundEnabled ? (
+            <Volume2 className="w-6 h-6" />
+          ) : (
+            <VolumeX className="w-6 h-6" />
+          )}
+        </div>
+        <div className="space-y-1">
+          <Label className="text-lg font-black uppercase tracking-tighter text-white italic">Neural Audio</Label>
+          <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Interface Frequency Modulation</p>
         </div>
       </div>
 
-      <Switch checked={soundEnabled} onCheckedChange={toggleSound} aria-label="Toggle sound effects" />
+      <Switch checked={soundEnabled} onCheckedChange={toggleSound} className="data-[state=checked]:bg-indigo-500" />
     </div>
   )
 }
 
-/** Disabled placeholder */
-function DesktopNotificationsPlaceholder() {
-  return (
-    <div className="opacity-50 cursor-not-allowed">
-      <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
-        <div>
-          <Label className="text-base font-medium text-zinc-100">Desktop Notifications</Label>
-          <p className="text-sm text-zinc-500">Unavailable on this platform</p>
-        </div>
-        <Switch disabled checked={false} />
-      </div>
-    </div>
-  )
-}
 function SystemCard({ icon: Icon, label, status, color }: any) {
   return (
-    <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3">
-      <div className={`p-2 rounded-lg bg-white/5 ${color}`}>
-        <Icon className="w-4 h-4" />
+    <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 flex flex-col gap-4 group hover:bg-white/[0.04] hover:border-white/10 transition-all">
+      <div className={cn("w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center transition-transform group-hover:scale-110", color)}>
+        <Icon className="w-5 h-5" />
       </div>
       <div>
-        <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">{label}</p>
-        <p className="text-sm font-medium text-zinc-200">{status}</p>
+        <p className="text-[9px] text-zinc-600 uppercase font-black tracking-[0.2em] mb-1">{label}</p>
+        <p className="text-sm font-black text-white italic tracking-tight">{status}</p>
       </div>
     </div>
   )

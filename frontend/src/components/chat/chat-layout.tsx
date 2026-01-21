@@ -67,8 +67,8 @@ export function ChatLayout({
                             {/* Mobile Header */}
                             <div className="h-20 px-6 flex items-center justify-between border-b border-white/5 bg-[#050505]/40 backdrop-blur-3xl shrink-0">
                                 <div className="flex flex-col">
-                                    <h1 className="text-xl font-black text-white tracking-[0.2em] uppercase">Vibely</h1>
-                                    <span className="text-[8px] font-black text-zinc-600 tracking-[0.3em] uppercase mt-1">Nexus Mobile Node</span>
+                                    <h1 className="text-xl font-bold text-white tracking-tight">Vibely</h1>
+                                    <span className="text-[11px] font-medium text-zinc-500 mt-0.5">Mobile Node</span>
                                 </div>
                                 <Avatar className="h-10 w-10 border border-white/10 rounded-xl">
                                     <AvatarImage src={currentUser?.avatar} />
@@ -90,18 +90,18 @@ export function ChatLayout({
                 {!selectedConversationId && (
                     <nav className="h-20 border-t border-white/5 bg-[#050505]/80 backdrop-blur-3xl flex items-center justify-around px-6 relative z-10 pb-safe">
                         {[
-                            { icon: MessageSquare, label: "Signals" },
-                            { icon: Search, label: "Scan" },
+                            { icon: MessageSquare, label: "Messages" },
+                            { icon: Search, label: "Search" },
                             { icon: Bell, label: "Alerts" },
                         ].map(({ icon: Icon, label }) => (
                             <Button
                                 key={label}
                                 variant="ghost"
                                 size="icon"
-                                className="flex flex-col gap-1.5 text-zinc-600 hover:text-cyan-400 transition-colors h-14 w-14 rounded-2xl"
+                                className="flex flex-col gap-1 text-zinc-500 hover:text-indigo-400 transition-all h-14 w-14 rounded-2xl"
                             >
                                 <Icon className="h-6 w-6" />
-                                <span className="text-[8px] font-black uppercase tracking-[0.1em]">
+                                <span className="text-[10px] font-bold tracking-tight">
                                     {label}
                                 </span>
                             </Button>

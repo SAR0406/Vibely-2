@@ -102,6 +102,26 @@
       box-shadow: 0 0 10px -2px var(--primary);
     }
   }
+
+  @keyframes mesh-gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes nexus-sweep {
+    100% {
+      transform: translateX(100%);
+    }
+  }
 }
 
 @layer base {
@@ -158,36 +178,36 @@
     --ring: 252 87% 67%;
     /* Matches Primary */
 
-    --radius: 1rem;
+    --radius: 1.25rem;
     /* Modern rounded look */
   }
 
   /* Force Dark Mode Default */
   .light {
-    --background: 240 20% 98%;
-    /* Soft Pearl */
-    --foreground: 240 10% 3.9%;
+    --background: 210 40% 98%;
+    /* Ultra Soft Blue-White */
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 252 87% 60%;
-    /* Slightly deeper indigo */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 330 85% 55%;
-    --accent-foreground: 240 5.9% 10%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 221.2 83.2% 53.3%;
+    /* Premium Blue */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 252 87% 67%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 1.25rem;
 
-    --color-glass: hsla(0, 0%, 100%, 0.8);
+    --color-glass: hsla(0, 0%, 100%, 0.7);
     --color-glass-border: hsla(0, 0%, 0%, 0.05);
   }
 }
@@ -240,6 +260,7 @@
 
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/30 selection:text-white;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   /* Custom Scrollbar for Webkit */
@@ -258,15 +279,54 @@
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10;
+  .glass-card {
+    @apply bg-white/[0.03] backdrop-blur-3xl border border-white/5 shadow-2xl;
   }
 
-  .glass-hover {
-    @apply hover:bg-white/10 hover:border-white/20 transition-all duration-300;
+  .glass-card-hover {
+    @apply hover:bg-white/[0.06] hover:border-white/10 hover:shadow-primary/5 transition-all duration-500;
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400;
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-white/40;
+  }
+
+  .mesh-gradient {
+    background: linear-gradient(-45deg, #121212, #1a1a1a, #0a0a0a, #151515);
+    background-size: 400% 400%;
+    animation: mesh-gradient 15s ease infinite;
+  }
+
+  .noise-texture::before {
+    content: "";
+    @apply absolute inset-0 opacity-[0.03] pointer-events-none z-50;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  .magic-border {
+    @apply relative p-[1px] overflow-hidden rounded-[inherit];
+  }
+
+  .magic-border::before {
+    content: "";
+    @apply absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%, #8b5cf6_0%, #06b6d4_50%, #8b5cf6_100%)] animate-[spin_4s_linear_infinite] opacity-0 group-hover:opacity-40 transition-opacity duration-500;
+  }
+
+  .magic-border-content {
+    @apply relative bg-[#050505] rounded-[inherit] h-full w-full;
+  }
+
+  .nexus-pulse {
+    @apply relative overflow-hidden;
+  }
+
+  .nexus-pulse::after {
+    content: "";
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full;
+    animation: nexus-sweep 3s infinite linear;
+  }
+
+  .blockchain-hash {
+    @apply font-mono text-[8px] opacity-30 hover:opacity-100 transition-opacity uppercase tracking-widest;
   }
 }

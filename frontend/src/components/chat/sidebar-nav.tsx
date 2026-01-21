@@ -35,10 +35,10 @@ type UserLike = {
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Nexus Core", path: "/dashboard", icon: Home },
-  { id: "chat", label: "Signals", path: "/chat", icon: Search }, // Search is used as Explore/Signals
-  { id: "events", label: "Events", path: "/events", icon: Calendar },
-  { id: "nexus", label: "Nexus Hub", path: "/nexus", icon: Shield },
-  { id: "settings", label: "Settings", path: "", icon: Settings },
+  { id: "chat", label: "Sync Grid", path: "/chat", icon: Search },
+  { id: "events", label: "Neural Clusters", path: "/events", icon: Calendar },
+  { id: "nexus", label: "Quantum Hub", path: "/nexus", icon: Shield },
+  { id: "settings", label: "Interface Settings", path: "", icon: Settings },
 ] as const;
 
 export function SidebarNav() {
@@ -82,11 +82,12 @@ export function SidebarNav() {
     <>
       <motion.aside
         layout
-        className="flex flex-col h-full bg-[#050505] border-r border-white/5 z-50"
-        style={{ width: 72, minWidth: 72 }}
+        className="flex flex-col h-full bg-[#050505] border-r border-white/5 z-50 noise-texture relative"
+        style={{ width: 80, minWidth: 80 }}
         role="navigation"
         aria-label="Primary sidebar"
       >
+        <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-indigo-500/20 to-transparent" />
         <LogoSection />
 
         <NavMenu
@@ -116,9 +117,14 @@ export function SidebarNav() {
 
 function LogoSection() {
   return (
-    <div className="flex justify-center py-4 shrink-0">
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg cursor-pointer border border-white/10 hover:scale-105 transition-transform">
-        <span className="text-xl font-bold text-white">V</span>
+    <div className="flex justify-center py-8 shrink-0">
+      <div className="relative group">
+        <div className="absolute inset-0 bg-indigo-500/40 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="w-12 h-12 rounded-2xl bg-[#050505] border border-white/10 flex items-center justify-center shadow-2xl cursor-pointer relative z-10 hover:border-indigo-500/50 transition-all duration-500">
+          <div className="w-6 h-6 bg-gradient-to-tr from-indigo-500 to-cyan-400 rounded-lg flex items-center justify-center">
+            <span className="text-xs font-black text-black">V</span>
+          </div>
+        </div>
       </div>
     </div>
   );

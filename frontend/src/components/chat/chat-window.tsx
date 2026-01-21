@@ -11,6 +11,12 @@ import { Button } from "@/components/design-system/button"
 import { Input } from "@/components/design-system/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/design-system/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { useChatStore } from "@/store/use-chat-store"
 import { useSocket } from "@/hooks/use-socket"
 import { chatApi, uploadApi } from "@/services/api"
@@ -422,116 +428,104 @@ export function ChatWindow() {
                 )}
             </AnimatePresence>
 
-            {/* Header - Nexus Control Bar */}
-            <header className="h-20 border-b border-white/5 flex items-center justify-between px-8 bg-[#050505]/40 backdrop-blur-3xl z-20 relative">
-                <div className="flex items-center gap-5">
+            {/* Header - Immersive Profile Bar */}
+            <header className="h-20 shrink-0 flex items-center justify-between px-6 bg-[#050505]/60 backdrop-blur-2xl z-30 border-b border-white/5 relative">
+                <div className="flex items-center gap-4">
                     {isMobile && (
                         <Button
-                            variant="glass"
+                            variant="ghost"
                             size="icon"
-                            className="text-zinc-400 -ml-2 hover:bg-white/5 rounded-2xl"
+                            className="text-zinc-400 hover:text-white rounded-full h-10 w-10 transition-colors"
                             onClick={() => selectConversation(null)}
                         >
-                            <ChevronLeft className="h-5 w-5" />
+                            <ChevronLeft className="h-6 w-6" />
                         </Button>
                     )}
-                    <div className="relative group cursor-pointer" onClick={() => setIsProfileModalOpen(true)}>
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="relative"
-                        >
-                            <div className="absolute inset-0 bg-indigo-500/20 rounded-[1.2rem] blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <Avatar className="h-12 w-12 border border-white/10 rounded-[1.2rem] shadow-2xl relative z-10 transition-all group-hover:border-white/20">
+
+                    <div className="relative cursor-pointer group" onClick={() => setIsProfileModalOpen(true)}>
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <Avatar className="h-11 w-11 rounded-full border border-white/10 shadow-2xl relative z-10">
                                 <AvatarImage src={activeChat.avatar} className="object-cover" />
-                                <AvatarFallback className="bg-zinc-800 text-zinc-500 font-black tracking-tight">{activeChat.name[0]}</AvatarFallback>
+                                <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold">{activeChat.name[0]}</AvatarFallback>
                             </Avatar>
-                        </motion.div>
+                        </div>
                         {isOnline && (
-                            <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-[3.5px] border-[#050505] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-[3px] border-[#080808] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]" />
                         )}
                     </div>
+
                     <div className="flex flex-col">
-                        <div className="flex items-center gap-2">
-                            <span className="font-black text-white tracking-tight uppercase text-base">{activeChat.name}</span>
-                            <div className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/5">
-                                <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Node Verified</span>
-                            </div>
-                        </div>
-                        <div className="mt-1">
+                        <span className="font-bold text-white tracking-tight text-[15px] group-hover:text-indigo-400 transition-colors cursor-pointer" onClick={() => setIsProfileModalOpen(true)}>
+                            {activeChat.name}
+                        </span>
+                        <div className="flex items-center gap-1.5 h-4">
                             {remoteTyping ? (
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 animate-pulse">Analyzing Input...</span>
+                                <motion.span
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="text-[11px] font-medium text-cyan-400"
+                                >
+                                    typing...
+                                </motion.span>
                             ) : (
-                                <span className={cn("text-[10px] font-black uppercase tracking-[0.2em]", isOnline ? "text-emerald-500/80" : "text-zinc-600")}>
-                                    {isOnline ? 'Nexus Stream Active' : (otherUser?.lastSeen ? `Disconnected ${formatDistance(otherUser.lastSeen)}` : 'Node Offline')}
+                                <span className={cn("text-[11px] font-medium transition-colors", isOnline ? "text-emerald-500" : "text-zinc-500")}>
+                                    {isOnline ? 'Online' : 'Offline'}
                                 </span>
                             )}
                         </div>
                     </div>
                 </div>
 
-                {/* Vibe Meter - Premium Analyzer Style */}
-                <div className="flex items-center gap-8">
-                    {activeChat.vibe && (
-                        <div className="hidden lg:flex flex-col items-end gap-2">
-                            <div className="flex items-center gap-3">
-                                <div className="flex flex-col items-end">
-                                    <span className="text-[9px] font-black text-zinc-600 tracking-widest uppercase mb-0.5">Atmosphere Analyser</span>
-                                    <span className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 uppercase tracking-tighter">
-                                        {activeChat.vibe.label}
-                                    </span>
-                                </div>
-                                <div className="h-10 w-[1px] bg-white/5" />
-                                <div className="flex flex-col items-start min-w-[3rem]">
-                                    <span className="text-[9px] font-black text-zinc-600 tracking-widest uppercase mb-0.5">Vector</span>
-                                    <span className="text-xs font-mono font-black text-zinc-400">
-                                        {activeChat.vibe.score}.00
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="w-40 h-1 bg-white/5 rounded-full overflow-hidden shadow-inner border border-white/5">
-                                <motion.div
-                                    className="h-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 shadow-[0_0_8px_rgba(99,102,241,0.5)]"
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${activeChat.vibe.score}%` }}
-                                    transition={{ duration: 1.5, type: "spring", bounce: 0 }}
-                                />
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="flex items-center gap-2">
-                        <Button
-                            variant="glass"
-                            size="icon"
-                            className="h-10 w-10 text-white hover:bg-white/10 rounded-2xl border-white/10 transition-all active:scale-90"
-                            onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, false)}
-                            disabled={!isOnline}
-                        >
-                            <Phone className="h-4.5 w-4.5" />
-                        </Button>
-                        <Button
-                            variant="glass"
-                            size="icon"
-                            className="h-10 w-10 text-white hover:bg-indigo-500/20 hover:text-indigo-300 rounded-2xl border-white/10 transition-all active:scale-90"
-                            onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, true)}
-                            disabled={!isOnline}
-                        >
-                            <Video className="h-4.5 w-4.5" />
-                        </Button>
-                        <div className="w-[1px] h-8 bg-white/5 mx-2" />
-                        <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-500 hover:text-white rounded-2xl">
-                            <MoreVertical className="h-5 w-5" />
-                        </Button>
-                        <Button
-                            variant="glass"
-                            size="icon"
-                            className="h-10 w-10 text-zinc-500 hover:text-rose-400 hover:bg-rose-400/10 rounded-2xl border-white/5 transition-all"
-                            onClick={() => setIsReportModalOpen(true)}
-                        >
-                            <Flag className="h-4.5 w-4.5" />
-                        </Button>
-                    </div>
+                <div className="flex items-center gap-1">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-all"
+                        onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, false)}
+                    >
+                        <Phone className="h-[18px] w-[18px]" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-all"
+                        onClick={() => otherUser && startCall(otherUser.id, activeChat.name, activeChat.id, true)}
+                    >
+                        <Video className="h-5 w-5" />
+                    </Button>
+                    <div className="w-[1px] h-6 bg-white/10 mx-2" />
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-all"
+                    >
+                        <Search className="h-5 w-5" />
+                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-10 w-10 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-all"
+                            >
+                                <MoreVertical className="h-5 w-5" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-[#1a1a1a] border-white/5 text-zinc-300 rounded-xl p-1 w-48 shadow-2xl backdrop-blur-3xl">
+                            <DropdownMenuItem className="rounded-lg p-2.5 focus:bg-white/5 cursor-pointer flex items-center gap-3">
+                                <Info className="w-4 h-4" />
+                                <span className="text-sm font-medium">View Profile</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                className="rounded-lg p-2.5 focus:bg-rose-500/10 focus:text-rose-400 cursor-pointer flex items-center gap-3"
+                                onClick={() => setIsReportModalOpen(true)}
+                            >
+                                <Flag className="w-4 h-4" />
+                                <span className="text-sm font-medium">Report User</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </header>
 
@@ -586,119 +580,107 @@ export function ChatWindow() {
                 </div>
             </ScrollArea>
 
-            {/* Input Area - Nexus Floating Command Node */}
-            <div className="px-8 pb-8 pt-2 bg-gradient-to-t from-black via-black/80 to-transparent z-20">
-                <div className="max-w-4xl mx-auto flex flex-col">
+            {/* Input Area - Redesigned Snapchat-style Floating Bar */}
+            <div className="px-6 pb-6 pt-2 bg-gradient-to-t from-black via-black/40 to-transparent z-40">
+                <div className="max-w-2xl mx-auto flex flex-col items-center">
 
                     <SmartReplies
                         lastMessageContent={activeMessages[activeMessages.length - 1]?.senderId !== currentUser?.id ? activeMessages[activeMessages.length - 1]?.content : undefined}
                         onSelect={(reply) => setInputValue(reply)}
                     />
 
-                    <ReplyPreview />
+                    <div className="w-full relative group">
+                        <ReplyPreview />
 
-                    <div className="relative glass-card border-white/10 rounded-[2.5rem] p-3 transition-all duration-500 focus-within:border-indigo-500/40 focus-within:bg-black/60 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group">
+                        <div className="flex items-end gap-2.5 bg-[#121212] border border-white/10 rounded-[2rem] p-2 pl-4 pr-2 shadow-2xl transition-all duration-300 focus-within:border-indigo-500/30 focus-within:bg-[#161616]">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="h-10 w-10 text-zinc-500 hover:text-white rounded-full shrink-0 mb-1"
+                            >
+                                <Paperclip className="h-5 w-5" />
+                            </Button>
 
-                        {/* Status Light */}
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-px w-12 h-1 bg-indigo-500/40 rounded-b-full blur-sm group-focus-within:bg-cyan-400 transition-colors" />
+                            <textarea
+                                value={inputValue}
+                                onChange={(e) => {
+                                    setInputValue(e.target.value)
+                                    handleTyping()
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault()
+                                        handleSend(e)
+                                    }
+                                }}
+                                placeholder="Message..."
+                                className="flex-1 bg-transparent border-0 focus:ring-0 resize-none min-h-[44px] max-h-[160px] py-3 text-[15px] font-medium text-white placeholder:text-zinc-600 scrollbar-hide"
+                                rows={1}
+                            />
 
-                        {showEmojiPicker && (
-                            <div className="absolute bottom-full right-0 mb-6 z-50 shadow-[0_0_100px_rgba(0,0,0,0.8)] rounded-[2.5rem] overflow-hidden border border-white/10 bg-[#0a0a0a] backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-5 duration-300">
-                                <EmojiPicker
-                                    theme={Theme.DARK}
-                                    emojiStyle={EmojiStyle.APPLE}
-                                    onEmojiClick={handleEmojiClick}
-                                    searchDisabled
-                                    skinTonesDisabled
-                                    width={340}
-                                    height={400}
-                                />
-                            </div>
-                        )}
+                            <div className="flex items-center gap-1.5 mb-1">
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                    className={cn(
+                                        "h-10 w-10 rounded-full transition-all",
+                                        showEmojiPicker ? "text-cyan-400" : "text-zinc-500 hover:text-white"
+                                    )}
+                                >
+                                    <Smile className="h-5.5 w-5.5" />
+                                </Button>
 
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileSelect}
-                            className="hidden"
-                            accept="image/*,application/pdf,.doc,.docx"
-                        />
-
-                        <form onSubmit={handleSend} className="flex items-end gap-3 px-2">
-                            {isRecording ? (
-                                <AudioRecorder
-                                    onSend={(file) => {
-                                        processFile(file)
-                                        setIsRecording(false)
-                                    }}
-                                    onCancel={() => setIsRecording(false)}
-                                />
-                            ) : (
-                                <>
+                                {inputValue.trim() ? (
                                     <Button
-                                        type="button"
-                                        variant="glass"
+                                        type="submit"
                                         size="icon"
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className="h-12 w-12 text-zinc-500 hover:text-cyan-400 hover:bg-white/5 rounded-3xl shrink-0 transition-all active:scale-90"
+                                        className="h-10 w-10 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg transition-all active:scale-95"
                                     >
-                                        <Paperclip className="h-5.5 w-5.5" />
+                                        <Send className="h-4.5 w-4.5" />
                                     </Button>
-
-                                    <textarea
-                                        value={inputValue}
-                                        onChange={(e) => {
-                                            setInputValue(e.target.value)
-                                            handleTyping()
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' && !e.shiftKey) {
-                                                e.preventDefault()
-                                                handleSend(e)
-                                            }
-                                        }}
-                                        placeholder="Transmit signal to Nexus..."
-                                        className="flex-1 bg-transparent border-0 focus:ring-0 resize-none min-h-[52px] max-h-[200px] py-4 text-[15px] font-medium text-white placeholder:text-zinc-700 scrollbar-hide"
-                                        rows={1}
-                                    />
-
-                                    <div className="flex items-center gap-2 shrink-0 pb-1.5">
+                                ) : (
+                                    <div className="flex items-center gap-1">
                                         <Button
                                             type="button"
-                                            variant="ghost"
                                             size="icon"
-                                            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                                            className={cn(
-                                                "h-12 w-12 rounded-3xl transition-all active:scale-90",
-                                                showEmojiPicker ? "text-cyan-400 bg-cyan-400/10" : "text-zinc-500 hover:text-white"
-                                            )}
+                                            variant="ghost"
+                                            className="h-10 w-10 rounded-full text-zinc-500 hover:text-white transition-all"
                                         >
-                                            <Smile className="h-6 w-6" />
+                                            <Mic className="h-5.5 w-5.5" />
                                         </Button>
-
-                                        {inputValue.trim() ? (
-                                            <Button
-                                                type="submit"
-                                                size="icon"
-                                                className="h-12 w-12 rounded-[1.4rem] bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-600/20 active:scale-90 transition-all"
-                                            >
-                                                <Send className="h-5 w-5 ml-0.5" />
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                type="button"
-                                                size="icon"
-                                                variant="ghost"
-                                                onClick={() => setIsRecording(true)}
-                                                className="h-12 w-12 rounded-3xl text-zinc-500 hover:text-red-400 hover:bg-red-500/10 active:scale-90 transition-all"
-                                            >
-                                                <Mic className="h-6 w-6" />
-                                            </Button>
-                                        )}
+                                        <Button
+                                            type="button"
+                                            size="icon"
+                                            variant="ghost"
+                                            className="h-10 w-10 rounded-full text-zinc-500 hover:text-white transition-all"
+                                        >
+                                            <ImageIcon className="h-5.5 w-5.5" />
+                                        </Button>
                                     </div>
-                                </>
-                            )}
-                        </form>
+                                )}
+                            </div>
+                        </div>
+
+                        {showEmojiPicker && (
+                            <div className="absolute bottom-full right-0 mb-4 z-50">
+                                <div className="shadow-2xl rounded-2xl overflow-hidden border border-white/10 bg-[#1a1a1a] backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-2">
+                                    <EmojiPicker
+                                        theme={Theme.DARK}
+                                        emojiStyle={EmojiStyle.APPLE}
+                                        onEmojiClick={handleEmojiClick}
+                                        searchDisabled
+                                        skinTonesDisabled
+                                        width={320}
+                                        height={400}
+                                    />
+                                </div>
+                                <div className="fixed inset-0 -z-10" onClick={() => setShowEmojiPicker(false)} />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

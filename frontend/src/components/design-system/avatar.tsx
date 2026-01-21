@@ -34,22 +34,27 @@ const Avatar = React.forwardRef<
     }
 
     return (
-        <div className="relative inline-block">
+        <div className="relative inline-block group/avatar">
             <AvatarPrimitive.Root
                 ref={ref}
                 className={cn(
-                    "relative flex shrink-0 overflow-hidden rounded-full border border-white/5",
+                    "relative flex shrink-0 overflow-hidden border border-white/5 shadow-2xl transition-transform duration-500 group-hover/avatar:scale-105",
+                    size === "sm" ? "rounded-xl" : size === "md" ? "rounded-2xl" : "rounded-[24px]",
                     sizeClasses[size],
                     className
                 )}
                 {...props}
             />
             {status && (
-                <span className={cn(
-                    "absolute bottom-0 right-0 rounded-full border-2 border-[var(--background)]",
+                <div className={cn(
+                    "absolute bottom-0 right-0 rounded-full border-2 border-[#050505] z-10",
                     statusColor[status],
                     statusSize[size]
-                )} />
+                )}>
+                    {status === "online" && (
+                        <div className="absolute inset-0 rounded-full bg-inherit animate-ping opacity-40" />
+                    )}
+                </div>
             )}
         </div>
     )
