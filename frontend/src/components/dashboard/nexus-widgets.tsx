@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Cloud, Sun, Wind, MapPin, Zap, Users, Play, Radio } from 'lucide-react';
+import { cn } from "@/lib/utils";
 
 export function WeatherWidget() {
     return (
