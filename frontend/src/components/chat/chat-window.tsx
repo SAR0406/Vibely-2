@@ -4,7 +4,7 @@ import * as React from "react"
 import {
     Send, Phone, Video, Info, Paperclip, Check, CheckCheck, Smile,
     Search, Download, FileText, X, Reply, Mic, ChevronLeft,
-    Image as ImageIcon, MoreVertical
+    Image as ImageIcon, MoreVertical, Sparkles
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/design-system/button"
@@ -30,6 +30,7 @@ import { MessageReactions } from "./message-reactions"
 import { Lightbox } from "@/components/ui/lightbox"
 import { ChatSkeleton } from "@/components/skeletons/chat-skeleton"
 import { SmartReplies } from "./smart-replies"
+import { ProfileModal } from "./profile-modal"
 
 const EmojiPicker = dynamic(
     () => import('emoji-picker-react'),
@@ -431,7 +432,7 @@ export function ChatWindow() {
                             <ChevronLeft className="h-5 w-5" />
                         </Button>
                     )}
-                    <div className="relative group cursor-pointer" onClick={() => setIsProfileModalOpen && (setIsProfileModalOpen as any)(true)}>
+                    <div className="relative group cursor-pointer" onClick={() => setIsProfileModalOpen(true)}>
                         <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -690,6 +691,10 @@ export function ChatWindow() {
                     </div>
                 </div>
             </div>
+            <ProfileModal
+                isOpen={isProfileModalOpen}
+                onClose={() => setIsProfileModalOpen(false)}
+            />
         </div>
     )
 }

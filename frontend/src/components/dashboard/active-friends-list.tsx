@@ -87,9 +87,4 @@ export function ActiveFriendsList() {
             </div>
         </motion.div>
     )
-        < ScrollBar orientation = "horizontal" className = "hidden" />
-                </ScrollArea >
-            </div >
-        </motion.div >
-    )
 }
