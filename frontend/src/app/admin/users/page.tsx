@@ -11,6 +11,7 @@ import {
     UserCheck,
     Mail,
     Calendar,
+    Crown,
     ShieldCheck
 } from "lucide-react"
 import { AdminLayout } from "@/components/admin/admin-layout"
@@ -31,6 +32,9 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { adminApi } from "@/services/api"
@@ -45,6 +49,7 @@ interface User {
     isActive: boolean
     createdAt: string
     lastSeen: string
+    tier: 'FREE' | 'PRO' | 'BUSINESS'
 }
 
 export default function UserManagement() {
@@ -74,6 +79,17 @@ export default function UserManagement() {
             fetchUsers()
         } catch (error) {
             alert("Failed to update role")
+        }
+    }
+
+    const handleUpgradeUser = async (userId: string, tier: 'FREE' | 'PRO' | 'BUSINESS') => {
+        try {
+            await adminApi.upgradeUser(userId, tier)
+            fetchUsers()
+            alert(`User upgraded to ${tier} successfully`)
+        } catch (error) {
+            console.error(error)
+            alert("Failed to upgrade user")
         }
     }
 
@@ -126,6 +142,7 @@ export default function UserManagement() {
                             <TableRow className="border-white/10 hover:bg-transparent">
                                 <TableHead className="text-zinc-400">User</TableHead>
                                 <TableHead className="text-zinc-400">Role</TableHead>
+                                <TableHead className="text-zinc-400">Tier</TableHead>
                                 <TableHead className="text-zinc-400">Status</TableHead>
                                 <TableHead className="text-zinc-400">Joined</TableHead>
                                 <TableHead className="text-zinc-400 text-right">Actions</TableHead>
@@ -134,13 +151,13 @@ export default function UserManagement() {
                         <TableBody>
                             {loading ? (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center py-10 text-zinc-500">
+                                    <TableCell colSpan={6} className="text-center py-10 text-zinc-500">
                                         Loading users...
                                     </TableCell>
                                 </TableRow>
                             ) : filteredUsers.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center py-10 text-zinc-500">
+                                    <TableCell colSpan={6} className="text-center py-10 text-zinc-500">
                                         No users found.
                                     </TableCell>
                                 </TableRow>
@@ -158,6 +175,16 @@ export default function UserManagement() {
                                             user.role === 'ADMIN' ? "text-purple-400" : "text-blue-400"
                                         )}>
                                             {user.role}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline" className={cn(
+                                            "rounded-full font-medium px-2.5 py-0.5 border-0 bg-white/5",
+                                            user.tier === 'BUSINESS' ? "text-amber-400 border-amber-500/20 bg-amber-500/10" :
+                                                user.tier === 'PRO' ? "text-indigo-400 border-indigo-500/20 bg-indigo-500/10" :
+                                                    "text-zinc-400"
+                                        )}>
+                                            {user.tier || 'FREE'}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
@@ -184,6 +211,25 @@ export default function UserManagement() {
                                             <DropdownMenuContent align="end" className="w-48 bg-zinc-900 border-white/10 text-white rounded-xl">
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                 <DropdownMenuSeparator className="bg-white/10" />
+
+                                                <DropdownMenuSub>
+                                                    <DropdownMenuSubTrigger className="gap-2 cursor-pointer focus:bg-white/10">
+                                                        <Crown className="w-4 h-4 text-amber-500" />
+                                                        Change Plan
+                                                    </DropdownMenuSubTrigger>
+                                                    <DropdownMenuSubContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                                                        <DropdownMenuItem onClick={() => handleUpgradeUser(user.id, 'FREE')}>
+                                                            Free Tier
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => handleUpgradeUser(user.id, 'PRO')}>
+                                                            Pro Tier
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => handleUpgradeUser(user.id, 'BUSINESS')}>
+                                                            Business Tier
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuSubContent>
+                                                </DropdownMenuSub>
+
                                                 <DropdownMenuItem
                                                     className="gap-2 focus:bg-purple-500/10 focus:text-purple-400 cursor-pointer"
                                                     onClick={() => handleUpdateRole(user.id, user.role === 'ADMIN' ? 'USER' : 'ADMIN')}
@@ -230,4 +276,5 @@ export default function UserManagement() {
         </AdminLayout>
     )
 }
+
 
