@@ -23,7 +23,7 @@ export class AdminController {
   constructor(
     private readonly adminService: AdminService,
     private readonly chatGateway: ChatGateway,
-  ) {}
+  ) { }
 
   @Get('stats')
   getStats() {
@@ -133,4 +133,19 @@ export class AdminController {
     this.chatGateway.broadcastToAll(content);
     return result;
   }
+
+  @Post('users/:id/upgrade')
+  upgradeUser(
+    @Request() req: any,
+    @Param('id') userId: string,
+    @Body('tier') tier: 'FREE' | 'PRO' | 'BUSINESS',
+  ) {
+    return this.adminService.upgradeUserTier(userId, tier, req.user.id);
+  }
+
+  @Delete('messages/:id')
+  deleteMessage(@Request() req: any, @Param('id') messageId: string) {
+    return this.adminService.deleteMessage(messageId, req.user.id);
+  }
+
 }

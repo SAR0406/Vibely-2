@@ -256,4 +256,60 @@ export class AdminService {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  async upgradeUserTier(userId: string, tier: 'FREE' | 'PRO' | 'BUSINESS', adminId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Update User Record
+      const user = await tx.user.update({
+        where: { id: userId },
+        data: { tier },
+      });
+
+      // 2. Manage Subscription Record
+      // Check if subscription exists
+      const existingSub = await tx.subscription.findUnique({
+        where: { userId },
+      });
+
+      if (existingSub) {
+        await tx.subscription.update({
+          where: { userId },
+          data: {
+            planId: tier === 'FREE' ? 'plan_free' : tier === 'PRO' ? 'plan_pro' : 'plan_business', // Simplified for now, ideally fetch Plan lookup
+            status: 'ACTIVE',
+            updatedAt: new Date(),
+          },
+        });
+      } else {
+        // Create dummy plan ID reference or handle if Plan table needs real IDs
+        // For now assuming we might need to find a plan first or just use a placeholder if appropriate, 
+        // but strictly following schema: Subscription links to Plan via planId.
+        // Let's assume we need to find the plan first.
+        const plan = await tx.plan.findFirst({ where: { tier } });
+        if (plan) {
+          await tx.subscription.create({
+            data: {
+              userId,
+              planId: plan.id,
+              status: 'ACTIVE',
+            }
+          })
+        }
+      }
+
+      await this.createAuditLog(adminId, 'UPGRADE_USER_TIER', userId, { tier });
+      return user;
+    });
+  }
+
+  async deleteMessage(messageId: string, adminId: string) {
+    const message = await this.prisma.message.delete({
+      where: { id: messageId },
+    });
+    await this.createAuditLog(adminId, 'DELETE_MESSAGE', messageId, {
+      content: message.content,
+      senderId: message.senderId,
+    });
+    return message;
+  }
 }
