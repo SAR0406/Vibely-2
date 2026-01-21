@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, AlertTriangle, ShieldCheck, Flag, MessageSquare, Info, ShieldAlert } from "lucide-react"
+import { X, AlertTriangle, ShieldCheck, Flag, MessageSquare, Info, ShieldAlert, Sparkles } from "lucide-react"
 import { Button } from "@/components/design-system/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
