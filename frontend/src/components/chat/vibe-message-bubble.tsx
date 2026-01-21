@@ -25,7 +25,7 @@ interface VibeMessageBubbleProps {
         id: string
         content: string
         senderId: string
-        createdAt: string
+        timestamp: string
         type: 'TEXT' | 'IMAGE' | 'AUDIO' | 'FILE'
         attachmentUrl?: string
         sender?: {
@@ -200,7 +200,7 @@ export function VibeMessageBubble({
                         "flex items-center gap-1 mt-1 text-[10px] opacity-60 select-none justify-end float-right ml-3 align-bottom h-4",
                         isMe ? "text-white/90" : "text-zinc-400"
                     )}>
-                        <span>{formatMessageTime(message.createdAt)}</span>
+                        <span>{formatMessageTime(message.timestamp)}</span>
                         {isMe && (
                             <span className={cn("ml-0.5", message.status === 'seen' && "text-cyan-300 opacity-100")}>
                                 {message.status === 'seen' || message.status === 'read' ? <CheckCheck className="w-3 h-3" /> : <Check className="w-3 h-3" />}
