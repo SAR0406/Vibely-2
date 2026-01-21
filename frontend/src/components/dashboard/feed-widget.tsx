@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { motion } from "framer-motion"
-import { Heart, MessageCircle, Share2, Send, Image as ImageIcon } from "lucide-react"
+import { Heart, MessageCircle, Share2, Send, Image as ImageIcon, Activity } from "lucide-react"
 import { feedApi } from "@/services/api"
 import { useChatStore } from "@/store/use-chat-store"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/design-system/avatar"
