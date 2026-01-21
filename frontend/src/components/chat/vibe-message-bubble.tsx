@@ -26,7 +26,7 @@ interface VibeMessageBubbleProps {
         content: string
         senderId: string
         timestamp: string
-        type: 'TEXT' | 'IMAGE' | 'AUDIO' | 'FILE'
+        type: 'TEXT' | 'IMAGE' | 'AUDIO' | 'FILE' | 'VIDEO'
         attachmentUrl?: string
         sender?: {
             name: string
@@ -192,6 +192,16 @@ export function VibeMessageBubble({
                                 )} />
                             </div>
                             <audio ref={audioRef} src={message.attachmentUrl} className="hidden" />
+                        </div>
+                    )}
+
+                    {message.type === 'VIDEO' && (
+                        <div className="-mx-4 -mt-2.5 -mb-2.5 rounded-inherit overflow-hidden relative group/video">
+                            <video
+                                src={message.attachmentUrl}
+                                controls
+                                className="max-w-full max-h-[400px] rounded-inherit block"
+                            />
                         </div>
                     )}
 

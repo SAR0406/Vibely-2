@@ -89,10 +89,22 @@ export function VibePostCard({ post, onLike, onComment, onShare }: VibePostCardP
                             )}
                         >
                             <div className={cn(
-                                "p-2 rounded-xl transition-all duration-300",
+                                "p-2 rounded-xl transition-all duration-300 relative",
                                 isLiked ? "bg-rose-500/10 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.2)]" : "bg-white/5 border border-white/5 group-hover/action:bg-white/10"
                             )}>
-                                <Heart className={cn("w-5 h-5 transition-transform duration-500", isLiked && "fill-rose-500")} />
+                                <Heart className={cn("w-5 h-5 transition-transform duration-500 relative z-10", isLiked && "fill-rose-500")} />
+                                <AnimatePresence>
+                                    {isLiked && (
+                                        <motion.div
+                                            initial={{ scale: 0, opacity: 0 }}
+                                            animate={{ scale: [1, 2, 0], opacity: [1, 1, 0], y: -20 }}
+                                            transition={{ duration: 0.6 }}
+                                            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                                        >
+                                            <Heart className="w-5 h-5 fill-rose-500 text-rose-500" />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
                             <div className="flex flex-col items-start">
                                 <span className="text-sm font-bold tracking-tight">{post._count?.likes || 0}</span>

@@ -81,9 +81,19 @@ export function ChatInput({
                     <Button
                         onClick={onSend}
                         size="icon"
-                        className="h-10 w-10 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg transition-all active:scale-95 ease-out-expo"
+                        className="h-10 w-10 rounded-full bg-primary hover:bg-primary/90 text-white shadow-lg transition-all active:scale-95 ease-out-expo overflow-hidden group/send"
                     >
-                        <Send className="h-4.5 w-4.5 ml-0.5" />
+                        <motion.div
+                            whileTap={{
+                                x: [0, 20, -20, 0],
+                                y: [0, -20, 0, 0],
+                                rotate: [0, 15, -15, 0],
+                                opacity: [1, 0, 0, 1]
+                            }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <Send className="h-4.5 w-4.5 ml-0.5 group-hover/send:rotate-12 transition-transform" />
+                        </motion.div>
                     </Button>
                 ) : (
                     <div className="flex items-center gap-1">

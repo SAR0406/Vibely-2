@@ -69,28 +69,46 @@ export function ChatLayout({
                 </div>
 
                 <div className="flex-1 w-full relative z-10 flex flex-col">
-                    {!selectedConversationId ? (
-                        <div className="h-full flex flex-col">
-                            {/* Mobile Header */}
-                            <div className="h-20 px-6 flex items-center justify-between border-b border-white/5 bg-[#050505]/60 backdrop-blur-3xl shrink-0 z-20">
-                                <div className="flex flex-col">
-                                    <h1 className="text-xl font-bold text-white tracking-tight">Vibely</h1>
-                                    <span className="text-[11px] font-medium text-cyan-400 mt-0.5 tracking-wide uppercase">Mobile Node</span>
+                    <AnimatePresence mode="wait">
+                        {!selectedConversationId ? (
+                            <motion.div
+                                key="sidebar"
+                                initial={{ x: -20, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                exit={{ x: -20, opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="h-full flex flex-col"
+                            >
+                                {/* Mobile Header */}
+                                <div className="h-20 px-6 flex items-center justify-between border-b border-white/5 bg-[#050505]/60 backdrop-blur-3xl shrink-0 z-20">
+                                    <div className="flex flex-col">
+                                        <h1 className="text-xl font-bold text-white tracking-tight">Vibely</h1>
+                                        <span className="text-[11px] font-medium text-cyan-400 mt-0.5 tracking-wide uppercase">Mobile Node</span>
+                                    </div>
+                                    <Avatar className="h-10 w-10 border border-white/10 rounded-xl shadow-lg">
+                                        <AvatarImage src={currentUser?.avatar} />
+                                        <AvatarFallback className="bg-zinc-800 text-white font-black">
+                                            {currentUser?.name?.[0] ?? "?"}
+                                        </AvatarFallback>
+                                    </Avatar>
                                 </div>
-                                <Avatar className="h-10 w-10 border border-white/10 rounded-xl shadow-lg">
-                                    <AvatarImage src={currentUser?.avatar} />
-                                    <AvatarFallback className="bg-zinc-800 text-white font-black">
-                                        {currentUser?.name?.[0] ?? "?"}
-                                    </AvatarFallback>
-                                </Avatar>
-                            </div>
-                            <div className="flex-1 overflow-hidden relative z-10">
-                                <Sidebar isCollapsed={false} />
-                            </div>
-                        </div>
-                    ) : (
-                        <ChatWindow />
-                    )}
+                                <div className="flex-1 overflow-hidden relative z-10">
+                                    <Sidebar isCollapsed={false} />
+                                </div>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="chat"
+                                initial={{ x: 20, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                exit={{ x: 20, opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="h-full"
+                            >
+                                <ChatWindow />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Mobile Bottom Navigation - Glass */}
@@ -114,27 +132,33 @@ export function ChatLayout({
             {/* Main Area */}
             <div className="flex-1 flex h-full overflow-hidden relative z-10">
                 {/* Sidebar Panel - Glass */}
-                <div
-                    className={cn(
-                        "h-full border-r border-white/5 relative transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) backdrop-blur-md bg-black/20",
-                        isCollapsed ? "w-0 opacity-0 -translate-x-full" : "w-[360px] opacity-100 translate-x-0"
-                    )}
-                >
-                    <Sidebar isCollapsed={isCollapsed} />
-
+                <AnimatePresence mode="wait">
                     {!isCollapsed && (
-                        <div className="absolute top-6 right-4 z-50">
-                            <Button
-                                variant="glass"
-                                size="icon"
-                                onClick={toggleSidebar}
-                                className="h-8 w-8 text-zinc-500 hover:text-white rounded-xl bg-white/5 border-white/10 hover:bg-white/10 transition-all"
-                            >
-                                <PanelLeftClose className="h-4 w-4" />
-                            </Button>
-                        </div>
+                        <motion.div
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -20, opacity: 0 }}
+                            transition={{ duration: 0.4, ease: "easeOut" }}
+                            className={cn(
+                                "h-full border-r border-glass-border relative backdrop-blur-3xl bg-glass-surface",
+                                "w-[360px]"
+                            )}
+                        >
+                            <Sidebar isCollapsed={false} />
+
+                            <div className="absolute top-6 right-4 z-50">
+                                <Button
+                                    variant="glass"
+                                    size="icon"
+                                    onClick={toggleSidebar}
+                                    className="h-8 w-8 text-zinc-500 hover:text-white rounded-xl bg-white/5 border-white/10 hover:bg-white/10 transition-all"
+                                >
+                                    <PanelLeftClose className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </motion.div>
                     )}
-                </div>
+                </AnimatePresence>
 
                 {/* Main Chat Area */}
                 <div className="flex-1 h-full relative flex flex-col min-w-0 bg-transparent">
