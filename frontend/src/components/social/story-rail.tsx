@@ -68,7 +68,7 @@ export function StoryRail() {
                             <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
                         </div>
                     </div>
-                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-600 group-hover:text-zinc-400 transition-colors">Sync Pulse</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-zinc-400 transition-colors">Add Story</span>
                 </motion.div>
 
                 {/* Stories List */}

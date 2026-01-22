@@ -94,7 +94,7 @@ export function ReportModal({ isOpen, onClose, type, targetId, targetName }: Rep
                     </div>
                     {!isSuccess && (
                         <p className="text-xs text-zinc-500 font-medium tracking-tight mt-2">
-                            {type === 'user' ? `Reporting ${targetName || 'this node'} for specialized review.` : "Help us optimize the Nexus experience."}
+                            {type === 'user' ? `Reporting ${targetName || 'this user'} for review.` : "Help us improve Vibely."}
                         </p>
                     )}
                 </div>
@@ -111,8 +111,8 @@ export function ReportModal({ isOpen, onClose, type, targetId, targetName }: Rep
                                     <ShieldCheck className="w-8 h-8 text-emerald-400" />
                                 </div>
                                 <div className="text-center">
-                                    <h4 className="text-lg font-black uppercase tracking-tight mb-1">Nexus Verified</h4>
-                                    <p className="text-sm text-zinc-500 font-medium">Your signal has been recorded for processing.</p>
+                                    <h4 className="text-lg font-black uppercase tracking-tight mb-1">Report Received</h4>
+                                    <p className="text-sm text-zinc-500 font-medium">Your report has been submitted for review.</p>
                                 </div>
                             </motion.div>
                         ) : (
@@ -147,11 +147,11 @@ export function ReportModal({ isOpen, onClose, type, targetId, targetName }: Rep
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Additional Signal Detail</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Description</label>
                                     <Textarea
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
-                                        placeholder="Briefly describe the anomaly..."
+                                        placeholder="Please describe the issue..."
                                         className="bg-black/40 border-white/5 rounded-2xl min-h-[120px] focus:border-red-500/30 focus:ring-red-500/10 transition-all placeholder:text-zinc-700 text-sm"
                                     />
                                 </div>
@@ -165,7 +165,7 @@ export function ReportModal({ isOpen, onClose, type, targetId, targetName }: Rep
                                     )}
                                     isLoading={isSubmitting}
                                 >
-                                    Transmit Report
+                                    Submit Report
                                 </Button>
                             </motion.div>
                         )}

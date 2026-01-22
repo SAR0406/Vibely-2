@@ -20,9 +20,9 @@ export function WeatherWidget() {
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_var(--color-cyan-400)]" />
-                            <p className="text-[10px] text-zinc-500 font-black uppercase tracking-[0.4em]">Atmospheric Telemetry</p>
+                            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.4em]">Weather</p>
                         </div>
-                        <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic">San Francisco</h3>
+                        <h3 className="text-2xl font-bold text-white tracking-tighter uppercase italic">San Francisco</h3>
                     </div>
                     <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-cyan-500/10 group-hover:border-cyan-500/20 transition-all duration-500">
                         <Sun className="w-5 h-5 text-zinc-600 group-hover:text-cyan-400 animate-pulse" />
@@ -33,13 +33,9 @@ export function WeatherWidget() {
                     <div className="flex items-baseline gap-2">
                         <span className="text-6xl font-black tracking-tighter text-white">72<span className="text-cyan-400/50">°</span></span>
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest leading-none mb-1">Status</span>
-                            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest leading-none">Optimal</span>
+                            <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest leading-none mb-1">Status</span>
+                            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest leading-none">Good</span>
                         </div>
-                    </div>
-                    <div className="space-y-1 text-right">
-                        <p className="blockchain-hash">Node: SFO-94105</p>
-                        <p className="blockchain-hash">RES: +4.2GHZ</p>
                     </div>
                 </div>
             </div>
@@ -61,7 +57,7 @@ export function LiveHuddleWidget() {
                         <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping absolute inset-0" />
                         <div className="w-2 h-2 rounded-full bg-rose-500 relative" />
                     </div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-rose-500 px-2 py-0.5 bg-rose-500/10 rounded-full">Sync Pulse</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-rose-500 px-2 py-0.5 bg-rose-500/10 rounded-full">Live</span>
                 </div>
                 <Radio className="w-4 h-4 text-zinc-700 group-hover:text-rose-400 transition-colors" />
             </div>
@@ -77,26 +73,26 @@ export function LiveHuddleWidget() {
                             <div className="absolute inset-0 bg-rose-500/20 rounded-2xl blur-md scale-75 opacity-0 group-hover/avatar:opacity-100 transition-opacity" />
                         </div>
                     ))}
-                    <div className="w-12 h-12 rounded-[1.25rem] bg-white/5 border-4 border-[#050505] flex items-center justify-center text-[10px] font-black text-zinc-500 uppercase tracking-tighter">
+                    <div className="w-12 h-12 rounded-[1.25rem] bg-white/5 border-4 border-[#050505] flex items-center justify-center text-[10px] font-bold text-zinc-500 uppercase tracking-tighter">
                         +42
                     </div>
                 </div>
 
                 <div className="space-y-2">
-                    <h4 className="font-black text-white text-xl tracking-tighter uppercase italic leading-tight group-hover:text-rose-400 transition-colors">Quantum Dev Meet</h4>
+                    <h4 className="font-bold text-white text-xl tracking-tighter uppercase italic leading-tight group-hover:text-rose-400 transition-colors">Dev Meeting</h4>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1.5 text-[10px] text-zinc-600 font-bold uppercase tracking-widest italic">
                             <Users className="w-3.5 h-3.5 text-rose-500/50" />
-                            <span>Cluster 04</span>
+                            <span>Room 04</span>
                         </div>
                         <div className="w-1 h-1 rounded-full bg-zinc-800" />
-                        <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest">Active</span>
+                        <span className="text-[10px] font-bold text-rose-500/60 uppercase tracking-widest">Active</span>
                     </div>
                 </div>
 
-                <button className="w-full h-12 rounded-2xl bg-white text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-rose-50 transition-all flex items-center justify-center gap-3 shadow-xl shadow-rose-500/5 active:scale-[0.98]">
+                <button className="w-full h-12 rounded-2xl bg-white text-black text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-rose-50 transition-all flex items-center justify-center gap-3 shadow-xl shadow-rose-500/5 active:scale-[0.98]">
                     <Play className="w-3 h-3 fill-black animate-pulse" />
-                    Interface
+                    Join
                 </button>
             </div>
         </motion.div>
@@ -117,9 +113,9 @@ export function MoodAnalyticsWidget() {
                 <div>
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-1 rounded-full bg-indigo-500" />
-                        <p className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.4em]">Neural Resonance</p>
+                        <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.4em]">Social Pulse</p>
                     </div>
-                    <h4 className="text-xl font-black text-white tracking-tighter uppercase italic">Global Vibe</h4>
+                    <h4 className="text-xl font-bold text-white tracking-tighter uppercase italic">Community Mood</h4>
                 </div>
                 <div className="w-11 h-11 rounded-2xl bg-indigo-500/5 flex items-center justify-center border border-indigo-500/10 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-all duration-700">
                     <Zap className="w-5 h-5 text-indigo-400 transition-transform group-hover:scale-110" />
@@ -128,16 +124,15 @@ export function MoodAnalyticsWidget() {
 
             <div className="space-y-8 relative z-10">
                 {[
-                    { label: 'Hype', val: '70%', color: 'bg-white', glow: 'shadow-white/20' },
-                    { label: 'Flow', val: '25%', color: 'bg-indigo-400', glow: 'shadow-indigo-400/20' },
-                    { label: 'Void', val: '5%', color: 'bg-zinc-800', glow: 'shadow-zinc-800/20' }
+                    { label: 'Active', val: '70%', color: 'bg-white', glow: 'shadow-white/20' },
+                    { label: 'Relaxed', val: '25%', color: 'bg-indigo-400', glow: 'shadow-indigo-400/20' },
+                    { label: 'Quiet', val: '5%', color: 'bg-zinc-800', glow: 'shadow-zinc-800/20' }
                 ].map((item, i) => (
                     <div key={i} className="space-y-3">
                         <div className="flex justify-between items-end mb-1">
-                            <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-600">{item.label}</span>
+                            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-600">{item.label}</span>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-xs font-black text-white tracking-tighter">{item.val}</span>
-                                <span className="text-[8px] font-bold text-zinc-700 uppercase tracking-widest">Cap</span>
                             </div>
                         </div>
                         <div className="h-1.5 bg-white/[0.02] rounded-full overflow-hidden p-[1px]">
@@ -153,9 +148,9 @@ export function MoodAnalyticsWidget() {
             </div>
 
             <div className="mt-12 pt-6 border-t border-white/5 flex justify-between items-center">
-                <p className="blockchain-hash">Last Sync: 0.002s</p>
+                <p className="text-[10px] text-zinc-500 font-mono">Last updated: Just now</p>
                 <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest animate-pulse">Synchronized</span>
+                    <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest animate-pulse">Synced</span>
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_var(--color-emerald-500)]" />
                 </div>
             </div>

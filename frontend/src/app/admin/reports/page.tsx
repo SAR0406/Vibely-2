@@ -142,9 +142,9 @@ export default function ReportsManagement() {
                         ))
                     ) : filteredReports.length === 0 ? (
                         <div className="py-24 text-center text-zinc-500 bg-white/[0.01] border border-dashed border-white/5 rounded-3xl">
-                            <Flag className="w-12 h-12 text-zinc-800 mx-auto mb-4" />
-                            <h3 className="text-lg font-bold text-zinc-600 uppercase italic tracking-widest">Clear Frequency</h3>
-                            <p className="text-sm mt-1 uppercase text-zinc-700 font-black tracking-tighter">No reports matching your current filter.</p>
+                            <Flag className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
+                            <h3 className="text-lg font-bold text-zinc-600">All Clear</h3>
+                            <p className="text-sm mt-1 text-zinc-500">No reports found.</p>
                         </div>
                     ) : (
                         <AnimatePresence>
@@ -190,15 +190,15 @@ export default function ReportsManagement() {
 
                                                         <div className="flex flex-wrap gap-6 pt-4 border-t border-white/[0.02]">
                                                             <div className="flex flex-col gap-1">
-                                                                <span className="text-[8px] text-zinc-700 uppercase font-black tracking-[0.2em]">Source Node</span>
-                                                                <span className="text-xs text-indigo-400 font-mono font-bold">0x{report.reporterId.substring(0, 8)}</span>
+                                                                <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">Reporter</span>
+                                                                <span className="text-sm text-indigo-500 font-medium">{report.reporterId.substring(0, 8)}...</span>
                                                             </div>
                                                             <div className="flex flex-col gap-1">
-                                                                <span className="text-[8px] text-zinc-700 uppercase font-black tracking-[0.2em]">Target Entity</span>
+                                                                <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">Target</span>
                                                                 {report.targetId ? (
-                                                                    <span className="text-xs text-rose-400 font-mono font-bold">0x{report.targetId.substring(0, 8)}</span>
+                                                                    <span className="text-sm text-rose-500 font-medium">{report.targetId.substring(0, 8)}...</span>
                                                                 ) : (
-                                                                    <span className="text-xs text-zinc-700 font-mono font-bold uppercase tracking-widest italic">Global Signal</span>
+                                                                    <span className="text-sm text-zinc-500 font-medium italic">General Feedback</span>
                                                                 )}
                                                             </div>
                                                         </div>
@@ -229,8 +229,8 @@ export default function ReportsManagement() {
                                                                     <Shield className="w-5 h-5 text-indigo-400 opacity-50" />
                                                                 </div>
                                                                 <div className="space-y-0.5">
-                                                                    <span className="text-[8px] text-zinc-700 uppercase font-black tracking-[0.2em]">Resolved By</span>
-                                                                    <p className="text-[10px] text-white font-mono font-bold uppercase">{report.resolvedById?.substring(0, 8) || "SYSTEM"}</p>
+                                                                    <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">Resolved By</span>
+                                                                    <p className="text-xs text-white font-medium">{report.resolvedById?.substring(0, 8) || "System"}</p>
                                                                 </div>
                                                             </div>
                                                         )}

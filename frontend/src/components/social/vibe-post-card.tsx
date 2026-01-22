@@ -108,7 +108,7 @@ export function VibePostCard({ post, onLike, onComment, onShare }: VibePostCardP
                             </div>
                             <div className="flex flex-col items-start">
                                 <span className="text-sm font-bold tracking-tight">{post._count?.likes || 0}</span>
-                                <span className="text-[8px] uppercase tracking-tighter opacity-50 font-black">Resonance</span>
+                                <span className="text-[10px] text-zinc-500 font-medium">Likes</span>
                             </div>
                         </motion.button>
 
@@ -123,7 +123,7 @@ export function VibePostCard({ post, onLike, onComment, onShare }: VibePostCardP
                             </div>
                             <div className="flex flex-col items-start">
                                 <span className="text-sm font-bold tracking-tight">{post._count?.comments || 0}</span>
-                                <span className="text-[8px] uppercase tracking-tighter opacity-50 font-black">Neural Links</span>
+                                <span className="text-[10px] text-zinc-500 font-medium">Comments</span>
                             </div>
                         </motion.button>
                     </div>
@@ -139,13 +139,6 @@ export function VibePostCard({ post, onLike, onComment, onShare }: VibePostCardP
                             <Share2 className="w-4.5 h-4.5" />
                         </button>
                     </div>
-                </div>
-
-                {/* Metadata Line */}
-                <div className="px-6 py-2 flex items-center gap-4 opacity-20 hover:opacity-100 transition-opacity">
-                    <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">Hash: 0x{post.id.substring(0, 12)}</span>
-                    <div className="w-1 h-1 rounded-full bg-zinc-700" />
-                    <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">Region: Global-Core-01</span>
                 </div>
             </GlassCard>
         </motion.div>

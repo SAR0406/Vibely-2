@@ -90,8 +90,8 @@ export function FeedWidget() {
                             type="text"
                             value={newPostContent}
                             onChange={(e) => setNewPostContent(e.target.value)}
-                            placeholder="Initiate Neural Pulse..."
-                            className="w-full bg-transparent border-none text-white placeholder:text-zinc-700 focus:outline-none focus:ring-0 text-lg font-bold tracking-tight italic"
+                            placeholder="What's on your mind?"
+                            className="w-full bg-transparent border-none text-white placeholder:text-zinc-700 focus:outline-none focus:ring-0 text-lg font-bold tracking-tight"
                             onKeyDown={(e) => e.key === 'Enter' && handleCreatePost()}
                         />
                         <div className="absolute -bottom-1 left-0 w-full h-[1px] bg-white/5" />
@@ -104,10 +104,10 @@ export function FeedWidget() {
                         <Button
                             variant="primary"
                             size="md"
-                            className="font-black uppercase tracking-[0.2em] text-[10px] px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
+                            className="font-bold px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
                             onClick={handleCreatePost}
                         >
-                            Broadcast
+                            Post
                         </Button>
                     </div>
                 </div>
@@ -128,9 +128,9 @@ export function FeedWidget() {
                 {posts.length === 0 && !isLoading && (
                     <div className="text-center py-40 bg-black/20 rounded-[3rem] border border-dashed border-white/5">
                         <div className="w-16 h-16 rounded-3xl bg-white/5 flex items-center justify-center mx-auto mb-6">
-                            <Activity className="w-8 h-8 text-zinc-700 animate-pulse" />
+                            <Activity className="w-8 h-8 text-zinc-700" />
                         </div>
-                        <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.5em] italic">Static Void • Waiting for Neural Pulses</p>
+                        <p className="text-zinc-600 text-sm font-bold">No posts yet.</p>
                     </div>
                 )}
             </div>

@@ -6,39 +6,39 @@ import { Shield, Lock, Fingerprint, Cpu, Zap, Activity, Globe, Box } from "lucid
 import { Button } from "@/components/design-system/button"
 import { cn } from "@/lib/utils"
 
-export default function NexusPage() {
+export default function ExplorePage() {
     return (
-        <div className="min-h-screen bg-[#050505] text-white p-8 lg:p-16 mesh-gradient noise-texture relative overflow-hidden">
+        <div className="min-h-screen bg-[#050505] text-white p-8 lg:p-16 noise-texture relative overflow-hidden">
             {/* Background Ambience */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-indigo-500/5 rounded-full blur-[120px]" />
                 <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/5 rounded-full blur-[120px]" />
             </div>
 
-            <div className="max-w-7xl mx-auto space-y-20 relative z-10">
+            <div className="max-w-7xl mx-auto space-y-12 relative z-10">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-12">
                     <div className="space-y-6">
                         <div className="flex items-center gap-4">
-                            <div className="p-4 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 shadow-[0_0_30px_rgba(99,102,241,0.1)] group hover:scale-105 transition-transform duration-500">
-                                <Shield className="w-8 h-8 text-indigo-400 group-hover:text-cyan-400 transition-colors" />
+                            <div className="p-4 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 shadow-[0_0_30px_rgba(99,102,241,0.1)]">
+                                <Shield className="w-8 h-8 text-indigo-400" />
                             </div>
                             <div className="space-y-1">
-                                <h1 className="text-5xl font-black uppercase tracking-tighter italic">Nexus <span className="text-indigo-500">Elite</span></h1>
-                                <p className="blockchain-hash">ID: MATRIX-CORE-ALPHA-9</p>
+                                <h1 className="text-4xl font-bold tracking-tight text-white">Explore <span className="text-indigo-500">Vibely</span></h1>
+                                <p className="text-xs font-mono text-zinc-500">ID: USER-ACCESS-GRANTED</p>
                             </div>
                         </div>
-                        <p className="text-zinc-500 font-medium max-w-xl leading-relaxed text-sm">
-                            Authorized access verified. Managing quantum encryption arrays, neural telemetry sync, and distributed ledger integrity for your node.
+                        <p className="text-zinc-400 font-medium max-w-xl leading-relaxed text-sm">
+                            Discover new communities, manage your security settings, and explore the latest features.
                         </p>
                     </div>
 
                     <div className="flex gap-4">
                         <Button variant="outline" size="sm" className="border-white/5 hover:border-indigo-500/30">
-                            Protocol Logs
+                            View Logs
                         </Button>
                         <Button variant="primary" size="sm" className="bg-white text-black hover:bg-zinc-200">
-                            Manual Override
+                            Settings
                         </Button>
                     </div>
                 </div>
@@ -47,53 +47,53 @@ export default function NexusPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <StatCard
                         icon={Lock}
-                        label="Encryption Matrix"
-                        value="quantum-rsa-8192"
+                        label="Security"
+                        value="Encrypted"
                         status="SECURE"
                         color="indigo"
-                        desc="Neural-Key Rotation Active"
+                        desc="End-to-end Encryption"
                     />
                     <StatCard
                         icon={Box}
-                        label="Blockchain Link"
-                        value="vibe-chain-v4"
-                        status="SYNCED"
+                        label="Network"
+                        value="Connected"
+                        status="ONLINE"
                         color="cyan"
-                        desc="Integrity Score: 99.98%"
+                        desc="Server Status: Optimal"
                     />
                     <StatCard
                         icon={Fingerprint}
-                        label="Identity Core"
-                        value="bio-neural-mfa"
+                        label="Identity"
+                        value="Verified"
                         status="ACTIVE"
                         color="rose"
-                        desc="Signature Verified"
+                        desc="2FA Enabled"
                     />
                 </div>
 
                 {/* Advanced Controls */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2">
-                        <ControlPanel title="Quantum Security Protocols">
+                        <ControlPanel title="Privacy & Security">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <ControlItem
-                                    label="Neural Signature Verification"
-                                    description="Sign every signal with your unique neural ID."
+                                    label="Two-Factor Authentication"
+                                    description="Add an extra layer of security to your account."
                                     enabled={true}
                                 />
                                 <ControlItem
-                                    label="Shadow Mode Proxy"
-                                    description="Route all signals through encrypted ghost nodes."
+                                    label="Incognito Mode"
+                                    description="Browse without saving history."
                                     enabled={false}
                                 />
                                 <ControlItem
-                                    label="Self-Destruct Triggers"
-                                    description="Automatically wipe node history on anomaly."
+                                    label="Data Deletion"
+                                    description="Automatically clear cache on exit."
                                     enabled={true}
                                 />
                                 <ControlItem
-                                    label="Quantum Tunneling"
-                                    description="Low-latency signal routing via private paths."
+                                    label="Secure Routing"
+                                    description="Use secure connection protocols."
                                     enabled={true}
                                 />
                             </div>
@@ -101,7 +101,7 @@ export default function NexusPage() {
                     </div>
 
                     <div className="lg:col-span-1">
-                        <ControlPanel title="Telemetry Hub">
+                        <ControlPanel title="Performance">
                             <div className="space-y-8">
                                 <div className="h-48 flex items-end gap-1.5 px-2">
                                     {[40, 70, 45, 90, 65, 80, 55, 95, 60, 85].map((h, i) => (
@@ -112,9 +112,6 @@ export default function NexusPage() {
                                             transition={{ delay: i * 0.05, duration: 1, ease: "easeOut" }}
                                             className="flex-1 bg-gradient-to-t from-indigo-500/10 via-indigo-500/40 to-cyan-400 rounded-t-sm relative group cursor-pointer"
                                         >
-                                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all bg-black border border-white/10 px-2 py-1 rounded-lg text-[9px] font-mono shadow-2xl z-20">
-                                                {h}MS
-                                            </div>
                                         </motion.div>
                                     ))}
                                 </div>
@@ -122,16 +119,16 @@ export default function NexusPage() {
                                     <div className="flex justify-between items-center bg-white/[0.02] p-4 rounded-2xl border border-white/5 group hover:bg-white/[0.05] transition-all">
                                         <div className="flex items-center gap-3">
                                             <Activity className="w-4 h-4 text-emerald-400" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Node Latency</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Latency</span>
                                         </div>
-                                        <span className="text-xs font-mono text-emerald-400">0.002ms</span>
+                                        <span className="text-xs font-mono text-emerald-400">12ms</span>
                                     </div>
                                     <div className="flex justify-between items-center bg-white/[0.02] p-4 rounded-2xl border border-white/5 group hover:bg-white/[0.05] transition-all">
                                         <div className="flex items-center gap-3">
                                             <Globe className="w-4 h-4 text-indigo-400" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Global Sync</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Region</span>
                                         </div>
-                                        <span className="text-xs font-mono text-indigo-400">100.00%</span>
+                                        <span className="text-xs font-mono text-indigo-400">US-EAST</span>
                                     </div>
                                 </div>
                             </div>

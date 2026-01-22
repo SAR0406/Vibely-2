@@ -50,7 +50,7 @@ export function CommandCenter() {
                                 <Search className="w-5 h-5 text-white/40" />
                                 <input
                                     autoFocus
-                                    placeholder="Nexus Search... (try 'VibeAI', 'Huddle', 'Themes')"
+                                    placeholder="Search... (try 'VibeAI', 'Huddle', 'Themes')"
                                     className="flex-1 bg-transparent border-none text-white outline-none placeholder:text-white/20 text-lg"
                                 />
                                 <div className="px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] text-white/40 font-mono">
@@ -61,14 +61,14 @@ export function CommandCenter() {
                             <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-4">
                                     <h4 className="px-4 text-[10px] uppercase tracking-widest font-bold text-white/40">Quick Actions</h4>
-                                    <ActionItem icon={Terminal} label="Launch VibeAI Analytics" shortcut="A" color="text-indigo-400" />
+                                    <ActionItem icon={Terminal} label="VibeAI Analytics" shortcut="A" color="text-indigo-400" />
                                     <ActionItem icon={Activity} label="Start Voice Huddle" shortcut="H" color="text-rose-400" />
                                     <ActionItem icon={TrendingUp} label="Boost My Recent Post" shortcut="B" color="text-emerald-400" />
                                 </div>
 
                                 <div className="space-y-4 p-4 rounded-2xl bg-white/5 border border-white/5">
                                     <div className="flex items-center justify-between mb-4">
-                                        <h4 className="text-[10px] uppercase tracking-widest font-bold text-white/40">Nexus Pass</h4>
+                                        <h4 className="text-[10px] uppercase tracking-widest font-bold text-white/40">Vibely Pass</h4>
                                         <Award className="w-4 h-4 text-cyan-400" />
                                     </div>
                                     <div className="space-y-4">

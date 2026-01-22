@@ -42,12 +42,12 @@ type UserLike = {
 };
 
 const NAV_ITEMS = [
-  { id: "dashboard", label: "Nexus Core", path: "/dashboard", icon: Home },
-  { id: "chat", label: "Sync Grid", path: "/chat", icon: Search },
-  { id: "notifications", label: "Alert Matrix", path: "", icon: Bell },
-  { id: "events", label: "Neural Clusters", path: "/events", icon: Calendar },
-  { id: "nexus", label: "Quantum Hub", path: "/nexus", icon: Shield },
-  { id: "settings", label: "Interface Settings", path: "", icon: Settings },
+  { id: "dashboard", label: "Dashboard", path: "/dashboard", icon: Home },
+  { id: "chat", label: "Chat", path: "/chat", icon: Search },
+  { id: "notifications", label: "Notifications", path: "", icon: Bell },
+  { id: "events", label: "Events", path: "/events", icon: Calendar },
+  { id: "nexus", label: "Explore", path: "/explore", icon: Shield },
+  { id: "settings", label: "Settings", path: "", icon: Settings },
 ] as const;
 
 export function SidebarNav() {
@@ -217,7 +217,7 @@ function NavMenu({ pathname, onNavClick, isSettingsOpen, requestCount }: NavMenu
                 <DropdownMenuContent side="right" align="start" className="w-80 bg-[#0a0a0a] border-white/10 p-0 shadow-2xl ml-4 overflow-hidden rounded-2xl">
                   <div className="p-4 border-b border-white/5 bg-white/[0.02]">
                     <h3 className="text-sm font-bold text-white">Friend Requests</h3>
-                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-0.5">Alert Matrix Status</p>
+                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-0.5">Recent Activity</p>
                   </div>
                   <div className="h-[400px]">
                     <RequestsPanel />
@@ -285,7 +285,7 @@ function SidebarFooter({ currentUser, onLogout }: SidebarFooterProps) {
           </TooltipTrigger>
 
           <TooltipContent side="right" className="bg-[#18181b] border-white/10 text-orange-400 font-medium ml-2">
-            Report Anomaly
+            Submit Report
           </TooltipContent>
         </Tooltip>
 
