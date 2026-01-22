@@ -6,7 +6,7 @@ export class ChatService {
   constructor(
     @Inject(IChatRepository)
     private readonly chatRepository: IChatRepository,
-  ) {}
+  ) { }
 
   async sendMessage(
     userId: string,
@@ -106,5 +106,61 @@ export class ChatService {
         create: [{ userId: userId1 }, { userId: userId2 }],
       },
     });
+  }
+
+  // ============================
+  // READ RECEIPTS
+  // ============================
+
+  async markAsRead(userId: string, conversationId: string, messageIds?: string[]) {
+    return this.chatRepository.markMessagesAsRead(userId, conversationId, messageIds);
+  }
+
+  async getUnreadCount(userId: string, conversationId: string) {
+    return this.chatRepository.getUnreadCount(userId, conversationId);
+  }
+
+  // ============================
+  // MESSAGE MANAGEMENT
+  // ============================
+
+  async deleteMessage(messageId: string, userId: string, forAll: boolean = false) {
+    const message = await this.chatRepository.findMessageById(messageId);
+    if (!message) return null;
+
+    // Only sender can delete for all
+    if (forAll && message.senderId !== userId) {
+      return null;
+    }
+
+    return this.chatRepository.deleteMessage(messageId, userId, forAll);
+  }
+
+  async forwardMessage(messageId: string, targetConversationIds: string[], userId: string) {
+    return this.chatRepository.forwardMessage(messageId, targetConversationIds, userId);
+  }
+
+  // ============================
+  // CONVERSATION MANAGEMENT
+  // ============================
+
+  async pinConversation(userId: string, conversationId: string, isPinned: boolean) {
+    return this.chatRepository.updateParticipantSettings(userId, conversationId, { isPinned });
+  }
+
+  async muteConversation(userId: string, conversationId: string, duration?: number) {
+    const muteUntil = duration ? new Date(Date.now() + duration) : null;
+    return this.chatRepository.updateParticipantSettings(userId, conversationId, {
+      isMuted: !!duration,
+      muteUntil,
+    });
+  }
+
+  async archiveConversation(userId: string, conversationId: string, isArchived: boolean) {
+    return this.chatRepository.updateParticipantSettings(userId, conversationId, { isArchived });
+  }
+
+  async getConversationSettings(userId: string, conversationId: string) {
+    return this.chatRepository.getParticipant(userId, conversationId);
   }
 }

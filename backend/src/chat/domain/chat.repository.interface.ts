@@ -14,6 +14,24 @@ export interface IChatRepository {
     role: string,
   ): Promise<any>;
   removeParticipant(conversationId: string, userId: string): Promise<any>;
+
+  // Read Receipts
+  markMessagesAsRead(userId: string, conversationId: string, messageIds?: string[]): Promise<any>;
+  getUnreadCount(userId: string, conversationId: string): Promise<number>;
+
+  // Message Management
+  deleteMessage(messageId: string, userId: string, forAll: boolean): Promise<any>;
+  forwardMessage(messageId: string, targetConversationIds: string[], userId: string): Promise<any[]>;
+  findMessageById(messageId: string): Promise<any>;
+
+  // Conversation Management
+  updateParticipantSettings(userId: string, conversationId: string, settings: {
+    isPinned?: boolean;
+    isMuted?: boolean;
+    muteUntil?: Date | null;
+    isArchived?: boolean;
+  }): Promise<any>;
+  getParticipant(userId: string, conversationId: string): Promise<any>;
 }
 
 export const IChatRepository = Symbol('IChatRepository');

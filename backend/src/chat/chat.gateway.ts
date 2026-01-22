@@ -269,16 +269,119 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
   ) {
     const userId = client.data.user.sub;
-    // In a real app, update DB here
-    // await this.chatService.markAsRead(userId, data.messageIds);
 
-    // If messageIds not provided, assumes "all/latest". 
-    // For now we just broadcast that "some messages" were seen or just valid for the conversation.
+    // Actually mark messages as read in database
+    const result = await this.chatService.markAsRead(
+      userId,
+      data.conversationId,
+      data.messageIds,
+    );
 
-    client.broadcast.emit('messages:seen', {
+    // Broadcast read receipt to all participants
+    this.server.emit('messages:read', {
       userId,
       conversationId: data.conversationId,
-      messageIds: data.messageIds, // Pass through if available
+      messageIds: result.messageIds || data.messageIds,
+      readAt: new Date(),
+    });
+  }
+
+  @SubscribeMessage('deleteMessage')
+  async handleDeleteMessage(
+    @MessageBody() data: { messageId: string; conversationId: string; forAll: boolean },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.user.sub;
+    this.logger.log(
+      `User ${userId} deleting message ${data.messageId} (forAll: ${data.forAll})`,
+    );
+
+    const deleted = await this.chatService.deleteMessage(
+      data.messageId,
+      userId,
+      data.forAll,
+    );
+
+    if (deleted) {
+      // Broadcast deletion to all participants
+      this.server.emit('message:deleted', {
+        messageId: data.messageId,
+        conversationId: data.conversationId,
+        deletedForAll: data.forAll,
+        deletedBy: userId,
+      });
+    }
+  }
+
+  @SubscribeMessage('forwardMessage')
+  async handleForwardMessage(
+    @MessageBody() data: { messageId: string; targetConversationIds: string[] },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.user.sub;
+    this.logger.log(
+      `User ${userId} forwarding message ${data.messageId} to ${data.targetConversationIds.length} conversations`,
+    );
+
+    const forwarded = await this.chatService.forwardMessage(
+      data.messageId,
+      data.targetConversationIds,
+      userId,
+    );
+
+    // Emit each forwarded message to respective conversation participants
+    forwarded.forEach((msg) => {
+      this.server.emit('message', {
+        ...msg,
+        isForwarded: true,
+      });
+    });
+  }
+
+  @SubscribeMessage('pinConversation')
+  async handlePinConversation(
+    @MessageBody() data: { conversationId: string; isPinned: boolean },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.user.sub;
+    await this.chatService.pinConversation(userId, data.conversationId, data.isPinned);
+
+    client.emit('conversation:updated', {
+      conversationId: data.conversationId,
+      isPinned: data.isPinned,
+    });
+  }
+
+  @SubscribeMessage('muteConversation')
+  async handleMuteConversation(
+    @MessageBody() data: { conversationId: string; duration?: number },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.user.sub;
+    const result = await this.chatService.muteConversation(
+      userId,
+      data.conversationId,
+      data.duration,
+    );
+
+    client.emit('conversation:updated', {
+      conversationId: data.conversationId,
+      isMuted: result.isMuted,
+      muteUntil: result.muteUntil,
+    });
+  }
+
+  @SubscribeMessage('archiveConversation')
+  async handleArchiveConversation(
+    @MessageBody() data: { conversationId: string; isArchived: boolean },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.user.sub;
+    await this.chatService.archiveConversation(userId, data.conversationId, data.isArchived);
+
+    client.emit('conversation:updated', {
+      conversationId: data.conversationId,
+      isArchived: data.isArchived,
     });
   }
 
