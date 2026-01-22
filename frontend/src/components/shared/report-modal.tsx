@@ -68,7 +68,7 @@ export function ReportModal({ isOpen, onClose, type, targetId, targetName }: Rep
             }, 2000)
         } catch (error) {
             console.error("Report submission failed:", error)
-            alert("Failed to transmit report. Please signal again later.")
+            alert("Failed to submit report. Please try again later.")
         } finally {
             setIsSubmitting(false)
         }

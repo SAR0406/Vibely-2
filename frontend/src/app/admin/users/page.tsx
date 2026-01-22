@@ -35,6 +35,7 @@ import {
     DropdownMenuSub,
     DropdownMenuSubTrigger,
     DropdownMenuSubContent,
+    DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { adminApi } from "@/services/api"
@@ -217,17 +218,19 @@ export default function UserManagement() {
                                                         <Crown className="w-4 h-4 text-amber-500" />
                                                         Change Plan
                                                     </DropdownMenuSubTrigger>
-                                                    <DropdownMenuSubContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
-                                                        <DropdownMenuItem onClick={() => handleUpgradeUser(user.id, 'FREE')}>
-                                                            Free Tier
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => handleUpgradeUser(user.id, 'PRO')}>
-                                                            Pro Tier
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => handleUpgradeUser(user.id, 'BUSINESS')}>
-                                                            Business Tier
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuSubContent>
+                                                    <DropdownMenuPortal>
+                                                        <DropdownMenuSubContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                                                            <DropdownMenuItem onClick={() => handleUpgradeUser(user.id, 'FREE')}>
+                                                                Free Tier
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleUpgradeUser(user.id, 'PRO')}>
+                                                                Pro Tier
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleUpgradeUser(user.id, 'BUSINESS')}>
+                                                                Business Tier
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuSubContent>
+                                                    </DropdownMenuPortal>
                                                 </DropdownMenuSub>
 
                                                 <DropdownMenuItem
