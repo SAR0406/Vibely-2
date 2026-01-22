@@ -11,7 +11,7 @@ export class ReportsService {
                 type: data.type,
                 reporterId,
                 targetId: data.targetId || null,
-                reason: data.category || data.reason,
+                reason: data.category || data.reason || 'No reason provided',
                 description: data.description || null,
                 status: 'OPEN',
             },

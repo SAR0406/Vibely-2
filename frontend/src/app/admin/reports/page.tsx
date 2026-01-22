@@ -27,6 +27,13 @@ import { adminApi } from "@/services/api"
 import { cn } from "@/lib/utils"
 import { formatDistanceToNow } from "date-fns"
 
+interface UserInfo {
+    id: string
+    name: string
+    email: string
+    avatar: string | null
+}
+
 interface Report {
     id: string
     type: string
@@ -38,6 +45,8 @@ interface Report {
     createdAt: string
     resolvedAt: string | null
     resolvedById: string | null
+    reporter?: UserInfo
+    target?: UserInfo
 }
 
 export default function ReportsManagement() {
@@ -191,12 +200,16 @@ export default function ReportsManagement() {
                                                         <div className="flex flex-wrap gap-6 pt-4 border-t border-white/[0.02]">
                                                             <div className="flex flex-col gap-1">
                                                                 <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">Reporter</span>
-                                                                <span className="text-sm text-indigo-500 font-medium">{report.reporterId.substring(0, 8)}...</span>
+                                                                <span className="text-sm text-indigo-500 font-medium">
+                                                                    {report.reporter?.name || `ID: ${report.reporterId.substring(0, 8)}...`}
+                                                                </span>
                                                             </div>
                                                             <div className="flex flex-col gap-1">
                                                                 <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">Target</span>
                                                                 {report.targetId ? (
-                                                                    <span className="text-sm text-rose-500 font-medium">{report.targetId.substring(0, 8)}...</span>
+                                                                    <span className="text-sm text-rose-500 font-medium">
+                                                                        {report.target?.name || `ID: ${report.targetId.substring(0, 8)}...`}
+                                                                    </span>
                                                                 ) : (
                                                                     <span className="text-sm text-zinc-500 font-medium italic">General Feedback</span>
                                                                 )}

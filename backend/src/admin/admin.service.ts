@@ -227,7 +227,27 @@ export class AdminService {
       }),
       this.prisma.report.count(),
     ]);
-    return { reports, total, page, limit };
+
+    // Fetch related users to avoid complex includes if schemas differ, 
+    // but better to use include if Prisma allows (schema says no relations defined for Report model)
+    // Since Report model doesn't have relations defined in schema.prisma, we'll fetch them manually or map.
+    const reporterIds = [...new Set(reports.map(r => r.reporterId))];
+    const targetIds = [...new Set(reports.map(r => r.targetId).filter(id => !!id))] as string[];
+
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: [...reporterIds, ...targetIds] } },
+      select: { id: true, name: true, email: true, avatar: true }
+    });
+
+    const userMap = new Map(users.map(u => [u.id, u]));
+
+    const reportsWithUsers = reports.map(report => ({
+      ...report,
+      reporter: userMap.get(report.reporterId),
+      target: report.targetId ? userMap.get(report.targetId) : null,
+    }));
+
+    return { reports: reportsWithUsers, total, page, limit };
   }
 
   async updateReportStatus(reportId: string, status: string, adminId: string) {
@@ -285,7 +305,20 @@ export class AdminService {
       });
 
       // 2. Manage Subscription Record
-      // Check if subscription exists
+      let plan = await tx.plan.findFirst({ where: { tier } });
+
+      // If plan doesn't exist, create it (seeding on the fly for robustness)
+      if (!plan) {
+        plan = await tx.plan.create({
+          data: {
+            name: `${tier} Plan`,
+            tier,
+            price: tier === 'FREE' ? 0 : tier === 'PRO' ? 29.99 : 99.99,
+            features: tier === 'FREE' ? ['Basic Chat'] : tier === 'PRO' ? ['Basic Chat', 'HD Calls'] : ['Full Access', 'Priority Support'],
+          }
+        });
+      }
+
       const existingSub = await tx.subscription.findUnique({
         where: { userId },
       });
@@ -294,26 +327,19 @@ export class AdminService {
         await tx.subscription.update({
           where: { userId },
           data: {
-            planId: tier === 'FREE' ? 'plan_free' : tier === 'PRO' ? 'plan_pro' : 'plan_business', // Simplified for now, ideally fetch Plan lookup
+            planId: plan.id,
             status: 'ACTIVE',
             updatedAt: new Date(),
           },
         });
       } else {
-        // Create dummy plan ID reference or handle if Plan table needs real IDs
-        // For now assuming we might need to find a plan first or just use a placeholder if appropriate, 
-        // but strictly following schema: Subscription links to Plan via planId.
-        // Let's assume we need to find the plan first.
-        const plan = await tx.plan.findFirst({ where: { tier } });
-        if (plan) {
-          await tx.subscription.create({
-            data: {
-              userId,
-              planId: plan.id,
-              status: 'ACTIVE',
-            }
-          })
-        }
+        await tx.subscription.create({
+          data: {
+            userId,
+            planId: plan.id,
+            status: 'ACTIVE',
+          }
+        });
       }
 
       await this.createAuditLog(adminId, 'UPGRADE_USER_TIER', userId, { tier });
