@@ -7,6 +7,7 @@ import { Button } from "@/components/design-system/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import { reportsApi } from "@/services/api"
 
 export type ReportType = "user" | "app" | "message"
 
@@ -51,25 +52,26 @@ export function ReportModal({ isOpen, onClose, type, targetId, targetName }: Rep
         if (!selectedCategory) return
 
         setIsSubmitting(true)
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
-
-        console.log("Report Submitted:", {
-            type,
-            targetId,
-            category: selectedCategory,
-            description
-        })
-
-        setIsSubmitting(false)
-        setIsSuccess(true)
-
-        setTimeout(() => {
-            onClose()
-            setIsSuccess(false)
-            setSelectedCategory("")
-            setDescription("")
-        }, 2000)
+        try {
+            await reportsApi.createReport({
+                type,
+                targetId,
+                category: selectedCategory,
+                description
+            })
+            setIsSuccess(true)
+            setTimeout(() => {
+                onClose()
+                setIsSuccess(false)
+                setSelectedCategory("")
+                setDescription("")
+            }, 2000)
+        } catch (error) {
+            console.error("Report submission failed:", error)
+            alert("Failed to transmit report. Please signal again later.")
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (

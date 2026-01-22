@@ -111,6 +111,10 @@ export const storiesApi = {
     viewStory: (id: string) => api.post(`/stories/${id}/view`)
 };
 
+export const reportsApi = {
+    createReport: (data: { type: string, targetId?: string, category: string, description?: string }) => api.post('/reports', data),
+};
+
 export const feedApi = {
     getFeed: () => api.get('/feed'),
     createPost: (formData: FormData) => api.post('/feed', formData, {

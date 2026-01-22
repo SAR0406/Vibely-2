@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -131,8 +132,9 @@ model SystemConfig {
 
 model Report {
   id           String   @id @default(uuid())
+  type         String   // user, app, message
   reporterId   String
-  targetId     String   // ID of user or message being reported
+  targetId     String?  // ID of user or message being reported (Optional for app reports)
   reason       String
   description  String?
   status       String   @default("OPEN") // OPEN, RESOLVED, DISMISSED

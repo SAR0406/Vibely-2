@@ -22,6 +22,8 @@ import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TierGuard } from './common/guards/tier.guard';
 
+import { ReportsModule } from './reports/reports.module';
+
 @Module({
   imports: [
     LoggerModule.forRoot({
@@ -52,6 +54,7 @@ import { TierGuard } from './common/guards/tier.guard';
     FeedModule,
     SubscriptionModule,
     AIModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [
