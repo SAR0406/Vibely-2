@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/design-system/
 import { formatMessageTime } from "@/lib/date-utils"
 import {
     Check, CheckCheck, Play, Pause, FileText, Download,
-    Smile, Reply, MoreVertical, Flag
+    Smile, Reply, MoreVertical, Flag, Forward, Trash2, Copy
 } from "lucide-react"
 import { Button } from "@/components/design-system/button"
 import { MessageReactions } from "./message-reactions"
@@ -39,6 +39,8 @@ interface VibeMessageBubbleProps {
             content: string
             sender?: { name: string }
         }
+        isForwarded?: boolean
+        isDeleted?: boolean
     }
     isMe: boolean // Keeping naming consistent with ChatWindow usage
     isFirstInGroup?: boolean
@@ -123,6 +125,14 @@ export function VibeMessageBubble({
                     </span>
                 )}
 
+                {/* Forwarded Label */}
+                {message.isForwarded && (
+                    <span className="flex items-center gap-1 text-[10px] text-zinc-500 ml-3 mb-1">
+                        <Forward className="w-3 h-3" />
+                        Forwarded
+                    </span>
+                )}
+
                 {/* Reply Context */}
                 {message.replyTo && (
                     <div
@@ -149,60 +159,70 @@ export function VibeMessageBubble({
                         ? "bg-gradient-to-br from-primary to-purple-600 text-white shadow-[0_4px_15px_rgba(124,58,237,0.25)]"
                         : "bg-[#18181b]/90 backdrop-blur-md border border-white/[0.08] text-zinc-100 dark:text-zinc-100" // Improved dark mode contrast
                 )}>
-                    {/* Content Renderer */}
-                    {message.type === 'TEXT' && (
-                        <p className="text-[14.5px] leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
-                    )}
+                    {/* Deleted Message */}
+                    {message.isDeleted ? (
+                        <p className="text-[14px] italic opacity-60 flex items-center gap-2">
+                            <Trash2 className="w-3.5 h-3.5" />
+                            This message was deleted
+                        </p>
+                    ) : (
+                        <>
+                            {/* Content Renderer */}
+                            {message.type === 'TEXT' && (
+                                <p className="text-[14.5px] leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
+                            )}
 
-                    {message.type === 'IMAGE' && (
-                        <div className="-mx-4 -mt-2.5 -mb-2.5 rounded-inherit overflow-hidden relative group/image">
-                            <img
-                                src={message.attachmentUrl}
-                                alt="Image"
-                                className="max-w-full max-h-[400px] object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500 block"
-                                onClick={() => message.attachmentUrl && onImageClick(message.attachmentUrl)}
-                            />
-                        </div>
-                    )}
+                            {message.type === 'IMAGE' && (
+                                <div className="-mx-4 -mt-2.5 -mb-2.5 rounded-inherit overflow-hidden relative group/image">
+                                    <img
+                                        src={message.attachmentUrl}
+                                        alt="Image"
+                                        className="max-w-full max-h-[400px] object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500 block"
+                                        onClick={() => message.attachmentUrl && onImageClick(message.attachmentUrl)}
+                                    />
+                                </div>
+                            )}
 
-                    {message.type === 'FILE' && (
-                        <div className="flex items-center gap-3 pr-2">
-                            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                                <FileText className="w-5 h-5 text-current opacity-80" />
-                            </div>
-                            <div className="flex flex-col overflow-hidden max-w-[140px]">
-                                <span className="text-sm font-medium truncate">{message.content}</span>
-                                <span className="text-[10px] opacity-60 uppercase tracking-wider">File</span>
-                            </div>
-                            <a href={message.attachmentUrl} download className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                                <Download className="w-4 h-4" />
-                            </a>
-                        </div>
-                    )}
+                            {message.type === 'FILE' && (
+                                <div className="flex items-center gap-3 pr-2">
+                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                                        <FileText className="w-5 h-5 text-current opacity-80" />
+                                    </div>
+                                    <div className="flex flex-col overflow-hidden max-w-[140px]">
+                                        <span className="text-sm font-medium truncate">{message.content}</span>
+                                        <span className="text-[10px] opacity-60 uppercase tracking-wider">File</span>
+                                    </div>
+                                    <a href={message.attachmentUrl} download className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                                        <Download className="w-4 h-4" />
+                                    </a>
+                                </div>
+                            )}
 
-                    {message.type === 'AUDIO' && (
-                        <div className="flex items-center gap-3 min-w-[200px] pr-2">
-                            <button onClick={toggleAudio} className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors shrink-0">
-                                {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
-                            </button>
-                            <div className="h-1 flex-1 bg-white/20 rounded-full overflow-hidden">
-                                <div className={cn(
-                                    "h-full bg-white rounded-full transition-all duration-300",
-                                    isPlaying ? "w-full animate-[width_30s_linear]" : "w-0" // Rough animation fallback
-                                )} />
-                            </div>
-                            <audio ref={audioRef} src={message.attachmentUrl} className="hidden" />
-                        </div>
-                    )}
+                            {message.type === 'AUDIO' && (
+                                <div className="flex items-center gap-3 min-w-[200px] pr-2">
+                                    <button onClick={toggleAudio} className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors shrink-0">
+                                        {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
+                                    </button>
+                                    <div className="h-1 flex-1 bg-white/20 rounded-full overflow-hidden">
+                                        <div className={cn(
+                                            "h-full bg-white rounded-full transition-all duration-300",
+                                            isPlaying ? "w-full animate-[width_30s_linear]" : "w-0" // Rough animation fallback
+                                        )} />
+                                    </div>
+                                    <audio ref={audioRef} src={message.attachmentUrl} className="hidden" />
+                                </div>
+                            )}
 
-                    {message.type === 'VIDEO' && (
-                        <div className="-mx-4 -mt-2.5 -mb-2.5 rounded-inherit overflow-hidden relative group/video">
-                            <video
-                                src={message.attachmentUrl}
-                                controls
-                                className="max-w-full max-h-[400px] rounded-inherit block"
-                            />
-                        </div>
+                            {message.type === 'VIDEO' && (
+                                <div className="-mx-4 -mt-2.5 -mb-2.5 rounded-inherit overflow-hidden relative group/video">
+                                    <video
+                                        src={message.attachmentUrl}
+                                        controls
+                                        className="max-w-full max-h-[400px] rounded-inherit block"
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
 
                     {/* Metadata (Time + Status) */}

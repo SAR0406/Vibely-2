@@ -58,6 +58,15 @@ export const chatApi = {
     createGroup: (data: { name: string, participantIds: string[], avatar?: string }) => api.post('/chats/groups', data),
     addMember: (conversationId: string, userId: string) => api.post(`/chats/${conversationId}/members`, { userId }),
     removeMember: (conversationId: string, userId: string) => api.delete(`/chats/${conversationId}/members/${userId}`),
+
+    // Conversation management
+    pinConversation: (conversationId: string, isPinned: boolean) => api.patch(`/chats/${conversationId}/pin`, { isPinned }),
+    muteConversation: (conversationId: string, duration?: number) => api.patch(`/chats/${conversationId}/mute`, { duration }),
+    archiveConversation: (conversationId: string, isArchived: boolean) => api.patch(`/chats/${conversationId}/archive`, { isArchived }),
+
+    // Message management
+    deleteMessage: (messageId: string, forAll: boolean) => api.delete(`/chats/messages/${messageId}`, { data: { forAll } }),
+    forwardMessage: (messageId: string, targetConversationIds: string[]) => api.post(`/chats/messages/${messageId}/forward`, { targetConversationIds }),
 };
 
 export const usersApi = {
